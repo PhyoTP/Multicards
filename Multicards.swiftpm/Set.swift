@@ -1,9 +1,10 @@
 import SwiftUI
 
-struct Set: Codable{
+struct Set: Codable, Hashable{
+    var setID: Int
     var name: String
     var cards: [Card]
-    var keys: [String]{
+    func keys() -> [String]{
         var tempKey: [String] = []
         for i in cards{
             for j in i.sides.keys{
@@ -14,8 +15,9 @@ struct Set: Codable{
         }
         return tempKey
     }
+    var creator: String = "Default iOS"
 }
-struct Card: Codable{
+struct Card: Codable, Hashable{
     var sides: [String: String] 
 }
 
