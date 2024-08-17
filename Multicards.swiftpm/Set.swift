@@ -20,4 +20,7 @@ struct Set: Codable, Hashable{
 struct Card: Codable, Hashable{
     var sides: [String: String] 
 }
-
+struct User: Codable{
+    var username: String
+    var password: String
+}
