@@ -2,7 +2,7 @@ import SwiftUI
 
 class SetsManager: ObservableObject {
     @Published var sets: [Set]?
-    let apiURL = URL(string: "https://phyotp.pythonanywhere.com/multicards/api")!
+    let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets")!
     func getSets() {
         sets = nil
         Task {
@@ -35,4 +35,7 @@ class SetsManager: ObservableObject {
         print("Posted the data successfully!")
         print(String(data: data, encoding: .utf8)!)
     }
+}
+class LocalSetsManager{
+    
 }

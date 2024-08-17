@@ -8,3 +8,8 @@ struct MyApp: App {
         }
     }
 }
+class UserData: ObservableObject{
+    @AppStorage("isDone") var done = false
+    @AppStorage("isLoggedIn") var isLoggedIn = false
+    
+}

@@ -10,14 +10,18 @@ struct HomeView: View{
                         Text(set.name)
                     }
                     .navigationTitle("Multicards")
+                    .refreshable{
+                        setsManager.getSets()
+                    }
                 }else{
                     ProgressView()
                         .progressViewStyle(.circular)
+                        .onAppear(){
+                            setsManager.getSets()
+                        }
                 }
             
         }
-        .onAppear(){
-            setsManager.getSets()
-        }
+        
     }
 }
