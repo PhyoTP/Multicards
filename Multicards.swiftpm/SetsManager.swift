@@ -1,3 +1,4 @@
+import Foundation
 import SwiftUI
 
 class SetsManager: ObservableObject {
@@ -36,6 +37,40 @@ class SetsManager: ObservableObject {
         print(String(data: data, encoding: .utf8)!)
     }
 }
-class LocalSetsManager{
+
+class LocalSetsManager: ObservableObject {
+    @Published var localSets: [Set] = [] {
+        didSet {
+            save()
+        }
+    }
+    
+    init() {
+        load()
+    }
+    
+    func getArchiveURL() -> URL {
+        let plistName = "localSets.plist"
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        
+        return documentsDirectory.appendingPathComponent(plistName)
+    }
+    
+    func save() {
+        let archiveURL = getArchiveURL()
+        let propertyListEncoder = PropertyListEncoder()
+        let encodedlocalSets = try? propertyListEncoder.encode(localSets)
+        try? encodedlocalSets?.write(to: archiveURL, options: .noFileProtection)
+    }
+    
+    func load() {
+        let archiveURL = getArchiveURL()
+        let propertyListDecoder = PropertyListDecoder()
+        
+        if let retrievedlocalSetsData = try? Data(contentsOf: archiveURL),
+           let localSetsDecoded = try? propertyListDecoder.decode([Set].self, from: retrievedlocalSetsData) {
+            localSets = localSetsDecoded
+        }
+    }
     
 }

@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct LoginView: View{
+struct RegisterView: View{
     @Binding var user: User
     @Environment(\.dismiss) var dismiss
     var userData: UserData
@@ -9,15 +9,15 @@ struct LoginView: View{
     @State var errorDesc = ""
     var body: some View{
         Form{
-            Section("Log in"){
+            Section("Register"){
                 TextField("Username", text: $user.username)
                 SecureField("Password",text: $user.password)
             }
             Section{
-                Button("Log in"){
+                Button("Register"){
                     Task {
                         do {
-                            try await userManager.login(user)
+                            try await userManager.register(user)
                             userData.isLoggedIn = true
                             userData.done = true
                         } catch {
@@ -39,4 +39,3 @@ struct LoginView: View{
         
     }
 }
-

@@ -4,7 +4,8 @@ struct StartView: View{
     var userData: UserData
     @State private var user = User(username: "", password: "")
     @State var login = false
-    @State var signup = false
+    @State var register = false
+    var userManager: UserManager
     var body: some View{
         VStack{
             Text("Welcome to Multicards")
@@ -17,15 +18,15 @@ struct StartView: View{
             .background(.blue)
             .foregroundStyle(.white)
             .cornerRadius(10)
-            Button("Sign up"){
-                signup = true
+            Button("Register for a PhyoID"){
+                register = true
             }
             .frame(width: 200)
             .padding()
             .background(.blue)
             .foregroundStyle(.white)
             .cornerRadius(10)
-            Button("Join as Guest"){
+            Button("Join as a Guest"){
                 userData.done = true
             }
             .frame(width: 200)
@@ -35,10 +36,13 @@ struct StartView: View{
             .cornerRadius(10)
         }
         .sheet(isPresented: $login, content: {
-            LoginView(user: $user, userData: userData)
+            LoginView(user: $user, userData: userData, userManager: userManager)
+        })
+        .sheet(isPresented: $register, content: {
+            RegisterView(user: $user, userData: userData, userManager: userManager)
         })
     }
 }
 #Preview{
-    StartView(userData: UserData())
+    StartView(userData: UserData(), userManager: UserManager())
 }

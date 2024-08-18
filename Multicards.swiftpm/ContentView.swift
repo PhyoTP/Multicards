@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject private var userData = UserData()
+    @StateObject var userManager = UserManager()
     var body: some View {
         if userData.done{
             TabView{
@@ -15,7 +16,7 @@ struct ContentView: View {
                     }
             }
         }else{
-            StartView(userData: userData)
+            StartView(userData: userData, userManager: userManager)
         }
     }
 }
