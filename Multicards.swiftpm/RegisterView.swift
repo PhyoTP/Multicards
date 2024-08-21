@@ -20,6 +20,7 @@ struct RegisterView: View{
                             try await userManager.register(user)
                             userData.isLoggedIn = true
                             userData.done = true
+                            userData.name = user.username
                         } catch {
                             errorDesc = error.localizedDescription
                             errorOccurred = true

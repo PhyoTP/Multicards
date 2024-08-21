@@ -1,6 +1,5 @@
 import SwiftUI
 class UserManager: ObservableObject {
-    
     func login(_ user: User) async throws {
         let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/login")!
         var request = URLRequest(url: apiURL)
@@ -33,7 +32,7 @@ class UserManager: ObservableObject {
         
         let (data, response) = try await URLSession.shared.data(for: request)
         
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 else {
             throw URLError(.badServerResponse)
         }
         if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],

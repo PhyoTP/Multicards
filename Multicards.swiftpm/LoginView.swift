@@ -20,6 +20,7 @@ struct LoginView: View{
                             try await userManager.login(user)
                             userData.isLoggedIn = true
                             userData.done = true
+                            userData.name = user.username
                         } catch {
                             errorDesc = error.localizedDescription
                             errorOccurred = true

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct Set: Codable, Hashable{
-    var setID: Int
+    var setID = UUID()
     var name: String
     var cards: [Card]
     func keys() -> [String]{

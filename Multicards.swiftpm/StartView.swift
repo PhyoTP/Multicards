@@ -43,6 +43,3 @@ struct StartView: View{
         })
     }
 }
-#Preview{
-    StartView(userData: UserData(), userManager: UserManager())
-}

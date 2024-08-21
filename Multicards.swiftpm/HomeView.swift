@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View{
     @StateObject var setsManager = SetsManager()
+    var userData: UserData
     var body: some View{
         NavigationStack{
             
@@ -9,7 +10,7 @@ struct HomeView: View{
                     List(sets, id: \.self){ set in
                         Text(set.name)
                     }
-                    .navigationTitle("Multicards")
+                    .navigationTitle(userData.isLoggedIn ? "Hello, " + userData.name : "Multicards")
                     .refreshable{
                         setsManager.getSets()
                     }

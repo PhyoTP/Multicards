@@ -6,7 +6,7 @@ struct ContentView: View {
     var body: some View {
         if userData.done{
             TabView{
-                HomeView()
+                HomeView(userData: userData)
                     .tabItem { 
                         Label("Home", systemImage: "house.fill")
                     }
