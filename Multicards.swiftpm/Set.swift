@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct Set: Codable, Hashable{
-    var setID = UUID()
+    var setID: UUID?
     var name: String
     var cards: [Card]
     func keys() -> [String]{
@@ -45,7 +45,7 @@ func convertStringToSet(input: String, termSeparator: TermSeparator, cardSeparat
         let components = card.components(separatedBy: termSeparator.rawValue)
         
         if components.count == 2 {
-            let newCard = Card(sides: [components[0].trimmingCharacters(in: .whitespacesAndNewlines):components[1].trimmingCharacters(in: .whitespacesAndNewlines)])
+            let newCard = Card(sides: ["term":components[0].trimmingCharacters(in: .whitespacesAndNewlines),"definition":components[1].trimmingCharacters(in: .whitespacesAndNewlines)])
             cards.append(newCard)
         }
     }

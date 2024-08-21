@@ -13,12 +13,14 @@ struct HomeView: View{
                     .navigationTitle(userData.isLoggedIn ? "Hello, " + userData.name : "Multicards")
                     .refreshable{
                         setsManager.getSets()
+                        print(userData.isLoggedIn)
                     }
                 }else{
                     ProgressView()
                         .progressViewStyle(.circular)
                         .onAppear(){
                             setsManager.getSets()
+                            print(userData.isLoggedIn)
                         }
                 }
             

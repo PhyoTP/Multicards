@@ -2,19 +2,25 @@ import SwiftUI
 
 struct ImportView: View{
     @State var title = ""
-    @State var isPublic = true
+    @State var isPublic = false
     @State var text = ""
     @State var selectedTermSeparator = TermSeparator.tab
     @State var selectedCardSeparator = CardSeparator.newline
     var userData: UserData
+    var localSetsManager: LocalSetsManager
+    var setsManager = SetsManager()
     @Environment(\.dismiss) var dismiss
     @State var result = Set(name: "", cards: [], creator: "")
+    @State var showError = false
+    @State var errorDesc = ""
     var body: some View{
         Form{
             Section("Details"){
                 TextField("Title",text: $title)
-                Toggle(isOn: $isPublic){
-                    Text("Set Public")
+                if userData.isLoggedIn{
+                    Toggle(isOn: $isPublic){
+                        Text("Set Public")
+                    }
                 }
             }
             Section("set"){
@@ -37,12 +43,34 @@ struct ImportView: View{
             Section{
                 Button("Create"){
                     result = convertStringToSet(input: text, termSeparator: selectedTermSeparator, cardSeparator: selectedCardSeparator, title: title, creator: userData.name)
-                    
+                    localSetsManager.localSets.append(result)
+                    if userData.isLoggedIn{
+                        Task {
+                            do{
+                                try await localSetsManager.sync()
+                            }catch{
+                                
+                            }
+                        }
+                        if isPublic{
+                            Task{
+                                do{
+                                    try await setsManager.postSet(result)
+                                }catch{
+                                    showError = true
+                                    errorDesc = error.localizedDescription
+                                }
+                            }
+                        }
+                    }
                 }
                 Button("Cancel", role: .destructive){
                     dismiss()
                 }
             }
+        }
+        .alert("An error occured", isPresented: $showError){
+            
         }
     }
 }

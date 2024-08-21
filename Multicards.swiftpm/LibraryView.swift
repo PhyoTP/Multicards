@@ -7,8 +7,8 @@ struct LibraryView: View{
     var userData: UserData
     var body: some View{
         NavigationStack{
-            List(localSetsManager.localSets, id: \.self){ set in
-                
+            List($localSetsManager.localSets, id: \.self, editActions: .all){ $set in
+                Text(set.name)
             }
             .navigationTitle("Library")
             .toolbar(){
@@ -26,13 +26,30 @@ struct LibraryView: View{
                         Image(systemName: "square.and.arrow.down")
                     }
                 }
+                ToolbarItem(placement: .topBarTrailing){
+                    EditButton()
+                }
+            }
+            .refreshable {
+                if userData.isLoggedIn{
+                    Task {
+                        try await localSetsManager.sync()
+                    }
+                }
+            }
+            .onChange(of: localSetsManager.localSets){
+                if userData.isLoggedIn{
+                    Task {
+                        try await localSetsManager.sync()
+                    }
+                }
             }
         }
         .sheet(isPresented:$showNewSheet){
             
         }
         .sheet(isPresented: $showImportSheet){
-            ImportView(userData: userData)
+            ImportView(userData: userData, localSetsManager: localSetsManager)
         }
     }
 }
