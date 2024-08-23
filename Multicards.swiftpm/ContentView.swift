@@ -15,7 +15,7 @@ struct ContentView: View {
                     .tabItem { 
                         Label("Home", systemImage: "house.fill")
                     }.tag(2)
-                SettingsView()
+                SettingsView(userData: userData)
                     .tabItem { 
                         Label("Settings", systemImage: "gear")
                     }.tag(3)
