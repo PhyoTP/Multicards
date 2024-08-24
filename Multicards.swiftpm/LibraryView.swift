@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct LibraryView: View{
+    @EnvironmentObject var userManager: UserManager
     @StateObject var localSetsManager = LocalSetsManager()
     @State private var showNewSheet = false
     @State private var showImportSheet = false
@@ -32,11 +33,13 @@ struct LibraryView: View{
             }
             .refreshable {
                 Task {
+                    try await userManager.login()
                     try await localSetsManager.sync()
                 }
             }
             .onChange(of: localSetsManager.localSets){
                 Task {
+                    try await userManager.login()
                     try await localSetsManager.sync()
                 }
             }

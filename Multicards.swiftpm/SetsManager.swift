@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 class SetsManager: ObservableObject {
-    @Published var sets: [Set]?
+    @Published var sets: [CardSet]?
     
     let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets")!
     
@@ -15,7 +15,7 @@ class SetsManager: ObservableObject {
                 print(String(data: data, encoding: .utf8)!)
                 
                 try await MainActor.run {
-                    self.sets = try JSONDecoder().decode([Set].self, from: data)
+                    self.sets = try JSONDecoder().decode([CardSet].self, from: data)
                 }
             } catch {
                 print("Failed to fetch sets: \(error)")
@@ -23,7 +23,7 @@ class SetsManager: ObservableObject {
         }
     }
     
-    func postSet(_ set: Set) async throws {
+    func postSet(_ set: CardSet) async throws {
         var request = URLRequest(url: apiURL)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -42,7 +42,7 @@ class SetsManager: ObservableObject {
 }
 
 class LocalSetsManager: ObservableObject {
-    @Published var localSets: [Set] = [] {
+    @Published var localSets: [CardSet] = [] {
         didSet { 
             save() 
         }
@@ -69,7 +69,7 @@ class LocalSetsManager: ObservableObject {
         let archiveURL = getArchiveURL()
         let propertyListDecoder = PropertyListDecoder()
         if let retrievedlocalSetsData = try? Data(contentsOf: archiveURL),
-           let localSetsDecoded = try? propertyListDecoder.decode([Set].self, from: retrievedlocalSetsData) {
+           let localSetsDecoded = try? propertyListDecoder.decode([CardSet].self, from: retrievedlocalSetsData) {
             localSets = localSetsDecoded
         }
         Task{
@@ -90,7 +90,7 @@ class LocalSetsManager: ObservableObject {
             }
             
             try await MainActor.run {
-                let sets = try JSONDecoder().decode([Set].self, from: data)
+                let sets = try JSONDecoder().decode([CardSet].self, from: data)
                 print(sets)
                 for i in sets {
                     if !localSets.contains(where: { $0.setID == i.setID }) {
@@ -120,7 +120,7 @@ class LocalSetsManager: ObservableObject {
             }
         }
     }
-    func updateSet(_ set: Set) async throws{
+    func updateSet(_ set: CardSet) async throws{
         if let token = retrieveToken(){
             let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/update/"+set.setID.uuidString)!
             var request = URLRequest(url: apiURL)
@@ -137,7 +137,7 @@ class LocalSetsManager: ObservableObject {
             }
         }
     }
-    func deleteSet(_ set: Set) async throws{
+    func deleteSet(_ set: CardSet) async throws{
         if let token = retrieveToken(){
             let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/delete/"+set.setID.uuidString)!
             var request = URLRequest(url: apiURL)

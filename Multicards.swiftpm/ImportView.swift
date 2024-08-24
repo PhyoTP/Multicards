@@ -10,7 +10,7 @@ struct ImportView: View{
     var localSetsManager: LocalSetsManager
     var setsManager = SetsManager()
     @Environment(\.dismiss) var dismiss
-    @State var result = Set(name: "", cards: [], creator: "")
+    @State var result = CardSet(name: "", cards: [], creator: "")
     @State var showError = false
     @State var errorDesc = ""
     var body: some View{

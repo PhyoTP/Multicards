@@ -1,19 +1,31 @@
 import SwiftUI
 
-struct Set: Codable, Hashable{
+struct CardSet: Codable, Hashable{
     var setID = UUID()
     var name: String
     var cards: [Card]
-    func keys() -> [String]{
-        var tempKey: [String] = []
+    func keys() -> Set<String>{
+        var tempKey = Set<String>()
         for i in cards{
             for j in i.sides.keys{
-                if !(tempKey.contains(j)){
-                    tempKey.append(j)
-                }
+                tempKey.insert(j)
             }
         }
         return tempKey
+    }
+    func table()->[String:[String]]{
+        var returnTable: [String:[String]]=[:]
+        for i in keys(){
+            returnTable[i]=[]
+            for j in cards{
+                if let thing = j.sides[i]{
+                    returnTable[i]?.append(thing)
+                }else{
+                    returnTable[i]?.append("")
+                }
+            }
+        }
+        return returnTable
     }
     var creator: String
 }
@@ -34,7 +46,7 @@ enum CardSeparator: String, CaseIterable {
     case semicolon = ";"
 }
 
-func convertStringToSet(input: String, termSeparator: TermSeparator, cardSeparator: CardSeparator, title: String, creator: String) -> Set {
+func convertStringToSet(input: String, termSeparator: TermSeparator, cardSeparator: CardSeparator, title: String, creator: String) -> CardSet {
     // Split the string into cards based on the card separator
     let rawCards = input.components(separatedBy: cardSeparator.rawValue)
     
@@ -50,5 +62,5 @@ func convertStringToSet(input: String, termSeparator: TermSeparator, cardSeparat
         }
     }
     
-    return Set(setID: UUID(), name: title, cards: cards, creator: creator)
+    return CardSet(setID: UUID(), name: title, cards: cards, creator: creator)
 }

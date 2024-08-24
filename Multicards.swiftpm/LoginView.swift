@@ -1,26 +1,25 @@
 import SwiftUI
 
 struct LoginView: View{
-    @Binding var user: User
     @Environment(\.dismiss) var dismiss
     var userData: UserData
-    var userManager: UserManager
+    @EnvironmentObject var userManager: UserManager
     @State var errorOccurred = false
     @State var errorDesc = ""
     var body: some View{
         Form{
             Section("Log in"){
-                TextField("Username", text: $user.username)
-                SecureField("Password",text: $user.password)
+                TextField("Username", text: $userManager.user.username)
+                SecureField("Password",text: $userManager.user.password)
             }
             Section{
                 Button("Log in"){
                     Task {
                         do {
-                            try await userManager.login(user)
+                            try await userManager.login()
                             userData.isLoggedIn = true
                             userData.done = true
-                            userData.name = user.username
+                            userData.name = userManager.user.username
                         } catch {
                             errorDesc = error.localizedDescription
                             errorOccurred = true

@@ -1,6 +1,39 @@
 import SwiftUI
 class UserManager: ObservableObject {
-    func login(_ user: User) async throws {
+    @Published var user = User(username: "", password: "") {
+        didSet {
+            save()
+        }
+    }
+    
+    init() {
+        load()
+    }
+    
+    func getArchiveURL() -> URL {
+        let plistName = "user.plist"
+        let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        
+        return documentsDirectory.appendingPathComponent(plistName)
+    }
+    
+    func save() {
+        let archiveURL = getArchiveURL()
+        let propertyListEncoder = PropertyListEncoder()
+        let encodedUser = try? propertyListEncoder.encode(user)
+        try? encodedUser?.write(to: archiveURL, options: .noFileProtection)
+    }
+    
+    func load() {
+        let archiveURL = getArchiveURL()
+        let propertyListDecoder = PropertyListDecoder()
+        
+        if let retrievedUserData = try? Data(contentsOf: archiveURL),
+           let userDecoded = try? propertyListDecoder.decode(User.self, from: retrievedUserData) {
+            user = userDecoded
+        }
+    }
+    func login() async throws {
         let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/login")!
         var request = URLRequest(url: apiURL)
         request.httpMethod = "POST"
@@ -21,7 +54,7 @@ class UserManager: ObservableObject {
             throw URLError(.cannotParseResponse)
         }
     }
-    func register(_ user: User) async throws {
+    func register() async throws {
         let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/register")!
         var request = URLRequest(url: apiURL)
         request.httpMethod = "POST"

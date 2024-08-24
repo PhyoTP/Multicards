@@ -1,27 +1,33 @@
 import SwiftUI
-
 struct ContentView: View {
     @StateObject private var userData = UserData()
-    @StateObject var userManager = UserManager()
+    @StateObject private var userManager = UserManager()
     @State var selection = 2
     var body: some View {
-        if userData.done{
-            TabView(selection: $selection){
+        if userData.done {
+            TabView(selection: $selection) {
                 LibraryView(userData: userData)
-                    .tabItem { 
+                    .tabItem {
                         Label("Library", systemImage: "books.vertical.fill")
                     }.tag(1)
+                    .environmentObject(userManager)
                 HomeView(userData: userData)
-                    .tabItem { 
+                    .tabItem {
                         Label("Home", systemImage: "house.fill")
                     }.tag(2)
                 SettingsView(userData: userData)
-                    .tabItem { 
+                    .tabItem {
                         Label("Settings", systemImage: "gear")
                     }.tag(3)
             }
-        }else{
-            StartView(userData: userData, userManager: userManager)
+            .onAppear(){
+                Task{
+                    try await userManager.login()
+                }
+            }
+        } else {
+            StartView(userData: userData)
+                .environmentObject(userManager)
         }
     }
 }
