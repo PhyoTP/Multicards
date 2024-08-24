@@ -1,14 +1,19 @@
 import SwiftUI
 
-struct CardSet: Codable, Hashable{
-    var setID = UUID()
+struct CardSet: Codable, Identifiable{
+    var id = UUID()
+    var setID: ID{
+        return id
+    }
     var name: String
     var cards: [Card]
-    func keys() -> Set<String>{
-        var tempKey = Set<String>()
+    func keys() -> [String]{
+        var tempKey: [String] = []
         for i in cards{
             for j in i.sides.keys{
-                tempKey.insert(j)
+                if !tempKey.contains(j){
+                    tempKey.append(j)
+                }
             }
         }
         return tempKey
@@ -29,7 +34,8 @@ struct CardSet: Codable, Hashable{
     }
     var creator: String
 }
-struct Card: Codable, Hashable{
+struct Card: Codable, Identifiable{
+    var id = UUID()
     var sides: [String: String] 
 }
 struct User: Codable{
@@ -62,5 +68,5 @@ func convertStringToSet(input: String, termSeparator: TermSeparator, cardSeparat
         }
     }
     
-    return CardSet(setID: UUID(), name: title, cards: cards, creator: creator)
+    return CardSet(name: title, cards: cards, creator: creator)
 }

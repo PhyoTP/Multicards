@@ -7,7 +7,7 @@ struct HomeView: View{
         NavigationStack{
             
                 if let sets = setsManager.sets{
-                    List(sets, id: \.self){ set in
+                    List(sets){ set in
                         Text(set.name)
                     }
                     .navigationTitle(userData.isLoggedIn ? "Hello, " + userData.name : "Multicards")

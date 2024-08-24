@@ -8,7 +8,7 @@ struct LibraryView: View{
     var userData: UserData
     var body: some View{
         NavigationStack{
-            List($localSetsManager.localSets, id: \.self, editActions: .all){ $set in
+            List($localSetsManager.localSets, editActions: .all){ $set in
                 Text(set.name)
             }
             .navigationTitle("Library")
@@ -32,12 +32,6 @@ struct LibraryView: View{
                 }
             }
             .refreshable {
-                Task {
-                    try await userManager.login()
-                    try await localSetsManager.sync()
-                }
-            }
-            .onChange(of: localSetsManager.localSets){
                 Task {
                     try await userManager.login()
                     try await localSetsManager.sync()
