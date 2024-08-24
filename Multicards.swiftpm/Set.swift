@@ -50,5 +50,5 @@ func convertStringToSet(input: String, termSeparator: TermSeparator, cardSeparat
         }
     }
     
-    return Set(name: title, cards: cards, creator: creator)
+    return Set(setID: UUID(), name: title, cards: cards, creator: creator)
 }

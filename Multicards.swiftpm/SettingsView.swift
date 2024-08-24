@@ -21,7 +21,7 @@ struct SettingsView: View{
             Button("Log out",role: .destructive){
                 userData.done = false
                 userData.isLoggedIn = false
-                userData.name = ""
+                userData.name = "You"
                 deleteToken()
             }
         }

@@ -43,10 +43,14 @@ class SetsManager: ObservableObject {
 
 class LocalSetsManager: ObservableObject {
     @Published var localSets: [Set] = [] {
-        didSet { save() }
+        didSet { 
+            save() 
+        }
     }
     
-    init() { load() }
+    init() {
+        load() 
+    }
     
     func getArchiveURL() -> URL {
         let plistName = "localSets.plist"
@@ -68,74 +72,85 @@ class LocalSetsManager: ObservableObject {
            let localSetsDecoded = try? propertyListDecoder.decode([Set].self, from: retrievedlocalSetsData) {
             localSets = localSetsDecoded
         }
+        Task{
+            try await sync()
+        }
     }
     
     func sync() async throws {
-        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/userdata")!
-        var request = URLRequest(url: apiURL)
-        request.setValue("Bearer \(retrieveToken())", forHTTPHeaderField: "Authorization")
-        
-        let (data, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
-        
-        try await MainActor.run {
-            let sets = try JSONDecoder().decode([Set].self, from: data)
-            print(sets)
-            for i in sets {
-                if !localSets.contains(where: { $0.setID == i.setID }) {
-                    localSets.append(i)
+        if let token = retrieveToken(){
+            let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/userdata")!
+            var request = URLRequest(url: apiURL)
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                throw URLError(.badServerResponse)
+            }
+            
+            try await MainActor.run {
+                let sets = try JSONDecoder().decode([Set].self, from: data)
+                print(sets)
+                for i in sets {
+                    if !localSets.contains(where: { $0.setID == i.setID }) {
+                        localSets.append(i)
+                    }
                 }
             }
+            try? await updateSets()
+            print(localSets)
         }
-        try? await addSet()
-        print(localSets)
     }
     
-    func addSet() async throws {
-        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/update/sets")!
-        var request = URLRequest(url: apiURL)
-        request.setValue("Bearer \(retrieveToken())", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "PATCH"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        request.httpBody = try JSONEncoder().encode(["sets": localSets])
-        
-        let (_, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw URLError(.badServerResponse)
+    func updateSets() async throws {
+        if let token = retrieveToken(){
+            let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/update/sets")!
+            var request = URLRequest(url: apiURL)
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.httpMethod = "PATCH"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            request.httpBody = try JSONEncoder().encode(["sets": localSets])
+            
+            let (_, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                throw URLError(.badServerResponse)
+            }
         }
     }
     func updateSet(_ set: Set) async throws{
-        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/update/"+set.setID.uuidString)!
-        var request = URLRequest(url: apiURL)
-        request.setValue("Bearer \(retrieveToken())", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "PUT"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        request.httpBody = try JSONEncoder().encode(set)
-        
-        let (_, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            throw URLError(.badServerResponse)
+        if let token = retrieveToken(){
+            let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/update/"+set.setID.uuidString)!
+            var request = URLRequest(url: apiURL)
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.httpMethod = "PUT"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            request.httpBody = try JSONEncoder().encode(set)
+            
+            let (_, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                throw URLError(.badServerResponse)
+            }
         }
     }
     func deleteSet(_ set: Set) async throws{
-        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/delete/"+set.setID.uuidString)!
-        var request = URLRequest(url: apiURL)
-        request.setValue("Bearer \(retrieveToken())", forHTTPHeaderField: "Authorization")
-        request.httpMethod = "DELETE"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        
-        let (_, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 204 else {
-            throw URLError(.badServerResponse)
+        if let token = retrieveToken(){
+            let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/delete/"+set.setID.uuidString)!
+            var request = URLRequest(url: apiURL)
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.httpMethod = "DELETE"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            
+            let (_, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 204 else {
+                throw URLError(.badServerResponse)
+            }
         }
     }
 }

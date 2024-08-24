@@ -31,17 +31,13 @@ struct LibraryView: View{
                 }
             }
             .refreshable {
-                if userData.isLoggedIn{
-                    Task {
-                        try await localSetsManager.sync()
-                    }
+                Task {
+                    try await localSetsManager.sync()
                 }
             }
             .onChange(of: localSetsManager.localSets){
-                if userData.isLoggedIn{
-                    Task {
-                        try await localSetsManager.sync()
-                    }
+                Task {
+                    try await localSetsManager.sync()
                 }
             }
         }
