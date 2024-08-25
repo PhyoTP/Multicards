@@ -1,13 +1,13 @@
 import SwiftUI
 
-import SwiftUI
-
 struct CreateSetView: View {
     @State var set: CardSet = CardSet(name: "", cards: [Card(sides: ["":""])], creator: "", isPublic: false)
+    @State var keys: [String] = [""]
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
     @State var showSheet = false
     var userData: UserData
+    
     var body: some View {
         Form {
             Section{
@@ -25,32 +25,29 @@ struct CreateSetView: View {
                         Grid(horizontalSpacing: 10, verticalSpacing: 10) {
                             // Header row with editable keys
                             GridRow {
-                                // Enumerate over the keys so we can access both index and value
-                                ForEach(Array(set.keys().enumerated()), id: \.element) { (index, key) in
-                                    TextField("Dimension", text: Binding(
-                                        get: { set.keys()[index] },
-                                        set: { newKey in
-                                            updateKey(at: index, with: newKey)
+                                ForEach(Array(keys.enumerated()), id: \.element) { (index, key) in
+                                    TextField("Dimension", text: $keys[index])
+                                        .padding()
+                                        .fontWeight(.bold)
+                                        .frame(width: 200, height: 40)
+                                        .background(colorScheme == .dark ? Color.black : Color.gray)
+                                        .cornerRadius(10)
+                                        .onSubmit{
+                                            updateKey(at: index, with: keys[index])
                                         }
-                                    ))
-                                    .padding()
-                                    .fontWeight(.bold)
-                                    .frame(width: 200, height: 40)
-                                    .background(colorScheme == .dark ? Color.black : Color.gray)
-                                    .cornerRadius(10)
                                 }
                                 
                                 // "+" Button to add a new key
-                                Button("Add dimension",systemImage: "plus") {
+                                Button("Add dimension", systemImage: "plus") {
                                     addNewKey()
-                                } 
+                                }
                                 .padding()
                             }
                             
                             // Rows for cards' values
                             ForEach($set.cards) { $card in
                                 GridRow {
-                                    ForEach(set.keys(), id: \.self) { key in
+                                    ForEach(keys, id: \.self) { key in
                                         TextField("Enter value", text: Binding(
                                             get: { card.sides[key] ?? "" },
                                             set: { newValue in card.sides[key] = newValue }
@@ -65,9 +62,9 @@ struct CreateSetView: View {
                         }
                         
                         // "+" Button to add a new card
-                        Button("Add card",systemImage: "plus") {
+                        Button("Add card", systemImage: "plus") {
                             addNewCard()
-                        } 
+                        }
                         .padding()
                     }
                 }
@@ -83,13 +80,16 @@ struct CreateSetView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $showSheet){
-            ImportView(userData: userData, result:$set)
+            ImportView(userData: userData, result: $set)
+        }
+        .onAppear {
+            keys = set.keys() // Initialize the keys
         }
     }
     
-    // Function to add a new key to all cards
     func addNewKey() {
         let newKey = "New Dimension"
+        keys.append(newKey)
         
         // Add the new key to every card's sides
         for index in set.cards.indices {
@@ -97,15 +97,13 @@ struct CreateSetView: View {
         }
     }
     
-    // Function to add a new card
     func addNewCard() {
         let newCard = Card(sides: [:])
         set.cards.append(newCard)
     }
     
-    // Function to update a key in all cards
     func updateKey(at index: Int, with newKey: String) {
-        let oldKey = set.keys()[index]
+        let oldKey = keys[index]
         
         // Update the key in all cards
         for cardIndex in set.cards.indices {

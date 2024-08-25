@@ -68,3 +68,4 @@ func convertStringToSet(input: String, termSeparator: TermSeparator, cardSeparat
     
     return CardSet(name: title, cards: cards, creator: creator, isPublic: false)
 }
+
