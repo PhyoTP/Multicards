@@ -6,13 +6,8 @@ struct ImportView: View{
     @State var selectedTermSeparator = TermSeparator.tab
     @State var selectedCardSeparator = CardSeparator.newline
     var userData: UserData
-    var localSetsManager: LocalSetsManager
-    var setsManager = SetsManager()
     @Environment(\.dismiss) var dismiss
-    @State var result = CardSet(name: "", cards: [], creator: "", isPublic: false)
-    @State var showError = false
-    @State var errorDesc = ""
-    @State var showSheet = false
+    @Binding var result: CardSet
     var body: some View{
         Form{
             Section("Details"){
@@ -36,21 +31,15 @@ struct ImportView: View{
                 TextField("Paste here", text: $text, axis: .vertical)
             }
             Section{
-                Button("Convert"){
+                Button("Import"){
                     result = convertStringToSet(input: text, termSeparator: selectedTermSeparator, cardSeparator: selectedCardSeparator, title: title, creator: userData.name)
-                    showSheet = true
+                    dismiss()
                     
                 }
                 Button("Cancel", role: .destructive){
                     dismiss()
                 }
             }
-        }
-        .alert("An error occured", isPresented: $showError){
-            
-        }
-        .sheet(isPresented: $showSheet){
-            EditSetView(set: result, create: true)
         }
     }
 }

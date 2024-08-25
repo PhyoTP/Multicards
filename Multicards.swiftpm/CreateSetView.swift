@@ -1,11 +1,20 @@
 import SwiftUI
 
-struct EditSetView: View {
-    @Binding var set: CardSet
+import SwiftUI
+
+struct CreateSetView: View {
+    @State var set: CardSet = CardSet(name: "", cards: [Card(sides: ["":""])], creator: "", isPublic: false)
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
+    @State var showSheet = false
+    var userData: UserData
     var body: some View {
         Form {
+            Section{
+                Button("Import", systemImage: "square.and.arrow.down"){
+                    showSheet = true
+                }
+            }
             // Title section
             TextField("Title", text: $set.name)
             
@@ -64,7 +73,7 @@ struct EditSetView: View {
                 }
             }
             Section{
-                Button("Save"){
+                Button("Create"){
                     
                 }
                 Button("Cancel", role: .destructive){
@@ -73,6 +82,9 @@ struct EditSetView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .sheet(isPresented: $showSheet){
+            ImportView(userData: userData, result:$set)
+        }
     }
     
     // Function to add a new key to all cards
