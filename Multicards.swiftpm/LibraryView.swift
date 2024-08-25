@@ -39,7 +39,7 @@ struct LibraryView: View{
             }
         }
         .sheet(isPresented:$showNewSheet){
-            
+            EditSetView(create: true)
         }
         .sheet(isPresented: $showImportSheet){
             ImportView(userData: userData, localSetsManager: localSetsManager)

@@ -2,9 +2,6 @@ import SwiftUI
 
 struct CardSet: Codable, Identifiable{
     var id = UUID()
-    var setID: ID{
-        return id
-    }
     var name: String
     var cards: [Card]
     func keys() -> [String]{
@@ -33,6 +30,7 @@ struct CardSet: Codable, Identifiable{
         return returnTable
     }
     var creator: String
+    var isPublic: Bool
 }
 struct Card: Codable, Identifiable{
     var id = UUID()
@@ -68,5 +66,5 @@ func convertStringToSet(input: String, termSeparator: TermSeparator, cardSeparat
         }
     }
     
-    return CardSet(name: title, cards: cards, creator: creator)
+    return CardSet(name: title, cards: cards, creator: creator, isPublic: false)
 }

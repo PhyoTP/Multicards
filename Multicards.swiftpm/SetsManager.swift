@@ -93,12 +93,16 @@ class LocalSetsManager: ObservableObject {
                 let sets = try JSONDecoder().decode([CardSet].self, from: data)
                 print(sets)
                 for i in sets {
-                    if !localSets.contains(where: { $0.setID == i.setID }) {
+                    if !localSets.contains(where: { $0.id == i.id }) {
                         localSets.append(i)
                     }
                 }
             }
-            try? await updateSets()
+            do{
+                try await updateSets()
+            }catch{
+                
+            }
             print(localSets)
         }
     }
@@ -122,7 +126,7 @@ class LocalSetsManager: ObservableObject {
     }
     func updateSet(_ set: CardSet) async throws{
         if let token = retrieveToken(){
-            let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/update/"+set.setID.uuidString)!
+            let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/update/"+set.id.uuidString)!
             var request = URLRequest(url: apiURL)
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             request.httpMethod = "PUT"
@@ -139,7 +143,7 @@ class LocalSetsManager: ObservableObject {
     }
     func deleteSet(_ set: CardSet) async throws{
         if let token = retrieveToken(){
-            let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/delete/"+set.setID.uuidString)!
+            let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/delete/"+set.id.uuidString)!
             var request = URLRequest(url: apiURL)
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             request.httpMethod = "DELETE"

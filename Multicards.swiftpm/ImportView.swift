@@ -2,7 +2,6 @@ import SwiftUI
 
 struct ImportView: View{
     @State var title = ""
-    @State var isPublic = false
     @State var text = ""
     @State var selectedTermSeparator = TermSeparator.tab
     @State var selectedCardSeparator = CardSeparator.newline
@@ -10,18 +9,14 @@ struct ImportView: View{
     var localSetsManager: LocalSetsManager
     var setsManager = SetsManager()
     @Environment(\.dismiss) var dismiss
-    @State var result = CardSet(name: "", cards: [], creator: "")
+    @State var result = CardSet(name: "", cards: [], creator: "", isPublic: false)
     @State var showError = false
     @State var errorDesc = ""
+    @State var showSheet = false
     var body: some View{
         Form{
             Section("Details"){
                 TextField("Title",text: $title)
-                if userData.isLoggedIn{
-                    Toggle(isOn: $isPublic){
-                        Text("Set Public")
-                    }
-                }
             }
             Section("set"){
                 Picker("Term Separator", selection: $selectedTermSeparator) {
@@ -41,28 +36,10 @@ struct ImportView: View{
                 TextField("Paste here", text: $text, axis: .vertical)
             }
             Section{
-                Button("Create"){
+                Button("Convert"){
                     result = convertStringToSet(input: text, termSeparator: selectedTermSeparator, cardSeparator: selectedCardSeparator, title: title, creator: userData.name)
-                    localSetsManager.localSets.append(result)
-                    if userData.isLoggedIn{
-                        Task {
-                            do{
-                                try await localSetsManager.sync()
-                            }catch{
-                                
-                            }
-                        }
-                        if isPublic{
-                            Task{
-                                do{
-                                    try await setsManager.postSet(result)
-                                }catch{
-                                    showError = true
-                                    errorDesc = error.localizedDescription
-                                }
-                            }
-                        }
-                    }
+                    showSheet = true
+                    
                 }
                 Button("Cancel", role: .destructive){
                     dismiss()
@@ -71,6 +48,9 @@ struct ImportView: View{
         }
         .alert("An error occured", isPresented: $showError){
             
+        }
+        .sheet(isPresented: $showSheet){
+            EditSetView(set: result, create: true)
         }
     }
 }
