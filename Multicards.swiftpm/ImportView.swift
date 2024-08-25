@@ -5,9 +5,8 @@ struct ImportView: View{
     @State var text = ""
     @State var selectedTermSeparator = TermSeparator.tab
     @State var selectedCardSeparator = CardSeparator.newline
-    var userData: UserData
     @Environment(\.dismiss) var dismiss
-    @Binding var result: CardSet
+    @Binding var result: [Column]
     var body: some View{
         Form{
             Section("Details"){
@@ -32,7 +31,7 @@ struct ImportView: View{
             }
             Section{
                 Button("Import"){
-                    result = convertStringToSet(input: text, termSeparator: selectedTermSeparator, cardSeparator: selectedCardSeparator, title: title, creator: userData.name)
+                    result = convertStringToColumns(input: text, termSeparator: selectedTermSeparator, cardSeparator: selectedCardSeparator)
                     dismiss()
                     
                 }
