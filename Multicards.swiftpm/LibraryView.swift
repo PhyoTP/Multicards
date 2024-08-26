@@ -31,7 +31,7 @@ struct LibraryView: View{
             }
         }
         .sheet(isPresented:$showSheet){
-            CreateSetView(userData: userData)
+            CreateSetView(userData: userData, localSetsManager: localSetsManager)
         }
     }
 }

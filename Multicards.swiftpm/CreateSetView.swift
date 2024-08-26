@@ -9,7 +9,8 @@ struct CreateSetView: View {
     var userData: UserData
     @State var showAlert = false
     @State var alertDesc = ""
-    
+    var localSetsManager: LocalSetsManager
+    var setsManager = SetsManager()
     var body: some View {
         Form {
             Section("Details") {
@@ -115,6 +116,17 @@ struct CreateSetView: View {
                     } else if numCards(columns) == 0{
                         showAlert = true
                         alertDesc = "Must have at least one card"
+                    } else {
+                        set.convertColumns(columns)
+                        set.creator = userData.name
+                        localSetsManager.localSets.append(set)
+                        Task{
+                            try await localSetsManager.sync()
+                            if set.isPublic{
+                                try await setsManager.postSet(set)
+                            }
+                        }
+                        
                     }
                 }
                 Button("Cancel", role: .destructive) {
@@ -132,5 +144,6 @@ struct CreateSetView: View {
     }
 }
 #Preview{
-    CreateSetView(userData: UserData())
+    CreateSetView(userData: UserData(), localSetsManager: LocalSetsManager())
+        .preferredColorScheme(.light)
 }
