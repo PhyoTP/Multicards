@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct ImportView: View{
-    @State var title = ""
     @State var text = ""
     @State var selectedTermSeparator = TermSeparator.tab
     @State var selectedCardSeparator = CardSeparator.newline
@@ -9,9 +8,6 @@ struct ImportView: View{
     @Binding var result: [Column]
     var body: some View{
         Form{
-            Section("Details"){
-                TextField("Title",text: $title)
-            }
             Section("set"){
                 Picker("Term Separator", selection: $selectedTermSeparator) {
                     ForEach(TermSeparator.allCases, id: \.self) { separator in
