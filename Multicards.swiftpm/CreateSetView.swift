@@ -19,15 +19,43 @@ struct CreateSetView: View {
                 }
             }
             
-            Section("Table") {
+            Section(header:Text("Table"), footer:
                 Button("Import", systemImage: "square.and.arrow.down") {
                     showSheet = true
+    
                 }
+            ) {
                 
                 ScrollView(.horizontal) {
                     HStack {
                         Grid {
+                            GridRow{
+                                Text("Dimension")
+                                    .fontWeight(.medium)
+                                    .offset(x:-30)
+                                Spacer()
+                                Rectangle()
+                                    .fill(Color(uiColor: .systemGray3))
+                                    .frame(width: 3)
+                                ForEach(0..<numCards(columns), id: \.self){num in
+                                    Button{
+                                        for i in columns.indices{
+                                            columns[i].values.remove(at: num)
+                                        }
+                                    }label: {
+                                        Image(systemName: "minus.circle.fill")
+                                            .foregroundStyle(.red)
+                                    }
+                                    Spacer()
+                                }
+                                Button("Add card", systemImage: "plus") {
+                                    for i in columns.indices {
+                                        columns[i].values.append("")
+                                    }
+                                }
+                            }
                             ForEach($columns) { $column in
+                                Divider()
                                 GridRow {
                                     TextField("Dimension", text: $column.name)
                                         .fontWeight(.medium)
@@ -55,10 +83,11 @@ struct CreateSetView: View {
                                     
                                     ForEach($column.values.indices, id: \.self) { index in
                                         TextField("Value", text: $column.values[index])
-                                        HStack { Divider() }
+                                        if index != column.values.count-1{
+                                            HStack { Divider() }
+                                        }
                                     }
                                 }
-                                Divider()
                             }
                             
                             GridRow {
@@ -70,11 +99,6 @@ struct CreateSetView: View {
                             }
                         }
                         
-                        Button("Add card", systemImage: "plus") {
-                            for i in columns.indices {
-                                columns[i].values.append("")
-                            }
-                        }
                     }
                 }
             }
@@ -88,6 +112,9 @@ struct CreateSetView: View {
                     } else if names.contains("") {
                         showAlert = true
                         alertDesc = "Dimension name cannot be blank"
+                    } else if numCards(columns) == 0{
+                        showAlert = true
+                        alertDesc = "Must have at least one card"
                     }
                 }
                 Button("Cancel", role: .destructive) {
@@ -103,4 +130,7 @@ struct CreateSetView: View {
             Alert(title: Text("Error"), message: Text(alertDesc), dismissButton: .default(Text("OK")))
         }
     }
+}
+#Preview{
+    CreateSetView(userData: UserData())
 }

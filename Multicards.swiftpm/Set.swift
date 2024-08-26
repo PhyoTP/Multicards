@@ -33,15 +33,8 @@ struct CardSet: Codable, Identifiable{
     var isPublic: Bool
     mutating func convertColumns(_ columns: [Column]){
         var tempCards: [Card] = []
-        var names: [String] = []
-        var numCards = 0
-        for i in columns{
-            names.append(i.name)
-            if i.values.count>numCards{
-                numCards = i.values.count
-            }
-        }
-        for _ in 0..<numCards{
+        let names: [String] = columns.map{ $0.name }
+        for _ in 0..<numCards(columns){
             tempCards.append(Card(sides: [:]))
         }
         for i in names{
@@ -56,7 +49,7 @@ struct Card: Codable, Identifiable{
     var id = UUID()
     var sides: [String: String] 
 }
-struct Column: Identifiable{
+struct Column: Identifiable, Equatable{
     var id = UUID()
     var name: String
     var values: [String]
@@ -102,3 +95,14 @@ func findColumn(_ columns: [Column], name: String)->Column{
     }
     return Column(name: "", values: [])
 }
+func numCards(_ columns: [Column])->Int{
+    var tempCards = 0
+    for i in columns{
+        if i.values.count>tempCards{
+            tempCards = i.values.count
+        }
+    }
+    return tempCards
+}
+
+
