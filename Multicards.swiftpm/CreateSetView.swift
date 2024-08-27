@@ -21,10 +21,10 @@ struct CreateSetView: View {
             }
             
             Section(header:Text("Table"), footer:
-                Button("Import", systemImage: "square.and.arrow.down") {
-                    showSheet = true
-    
-                }
+                        Button("Import", systemImage: "square.and.arrow.down") {
+                showSheet = true
+                
+            }
             ) {
                 
                 ScrollView(.horizontal) {
@@ -120,12 +120,12 @@ struct CreateSetView: View {
                         set.convertColumns(columns)
                         set.creator = userData.name
                         localSetsManager.localSets.append(set)
-                        Task{
-                            try await localSetsManager.sync()
-                            if set.isPublic{
-                                try await setsManager.postSet(set)
-                            }
+                        dismiss()
+                        localSetsManager.sync()
+                        if set.isPublic{
+                            setsManager.postSet(set)
                         }
+                        
                         
                     }
                 }

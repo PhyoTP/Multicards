@@ -11,33 +11,48 @@ class SetsManager: ObservableObject {
         Task {
             do {
                 let (data, _) = try await URLSession.shared.data(from: apiURL)
-                print("Got the data!")
-                print(String(data: data, encoding: .utf8)!)
+                
                 
                 try await MainActor.run {
                     self.sets = try JSONDecoder().decode([CardSet].self, from: data)
                 }
             } catch {
-                print("Failed to fetch sets: \(error)")
+                print("Failed to fetch sets: \(error.localizedDescription)")
             }
         }
     }
     
-    func postSet(_ set: CardSet) async throws {
-        var request = URLRequest(url: apiURL)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
-        let jsonData = try JSONEncoder().encode(set)
-        request.httpBody = jsonData
-        
-        let (_, response) = try await URLSession.shared.data(for: request)
-        
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 else {
-            throw URLError(.badServerResponse)
+    func postSet(_ set: CardSet) {
+        Task {
+            do {
+                var request = URLRequest(url: apiURL)
+                request.httpMethod = "POST"
+                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                
+                // Encode the data
+                let jsonData = try JSONEncoder().encode(set)
+                request.httpBody = jsonData
+                
+                // Perform the network request
+                let (_, response) = try await URLSession.shared.data(for: request)
+                
+                // Check if the response is an HTTPURLResponse
+                if let httpResponse = response as? HTTPURLResponse {
+                    // Check for the expected status code
+                    if httpResponse.statusCode == 201 {
+                        print("Successfully posted the set")
+                    } else {
+                        print("Unexpected status code: \(httpResponse.statusCode)")
+                        throw URLError(.badServerResponse)
+                    }
+                } else {
+                    throw URLError(.badServerResponse)
+                }
+            } catch {
+                // Handle errors
+                print("Failed to post set: \(error.localizedDescription)")
+            }
         }
-        
-        print("Posted the data successfully!")
     }
 }
 
@@ -72,88 +87,138 @@ class LocalSetsManager: ObservableObject {
            let localSetsDecoded = try? propertyListDecoder.decode([CardSet].self, from: retrievedlocalSetsData) {
             localSets = localSetsDecoded
         }
-        Task{
-            try await sync()
-        }
+        
+        
+        
     }
     
-    func sync() async throws {
-        if let token = retrieveToken(){
-            let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/userdata")!
-            var request = URLRequest(url: apiURL)
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+    func sync() {
+        print("syncing")
+        
+        if let token = retrieveToken() {
+            print(token)
             
-            let (data, response) = try await URLSession.shared.data(for: request)
-            
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                throw URLError(.badServerResponse)
+            guard let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/userdata") else {
+                print("Invalid URL")
+                return
             }
             
-            try await MainActor.run {
-                let sets = try JSONDecoder().decode([CardSet].self, from: data)
-                print(sets)
-                for i in sets {
-                    if !localSets.contains(where: { $0.id == i.id }) {
-                        localSets.append(i)
+            Task {
+                do {
+                    var request = URLRequest(url: apiURL)
+                    request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+                    
+                    // Perform the network request
+                    let (data, response) = try await URLSession.shared.data(for: request)
+                    
+                    // Validate response
+                    if let httpResponse = response as? HTTPURLResponse{
+                        print("HTTP Status code: \(httpResponse.statusCode)")
+                        guard httpResponse.statusCode == 200 else {
+                            throw URLError(.badServerResponse)
+                        }
                     }
+                    
+                    // Decode and update sets on the main thread
+                    try await MainActor.run {
+                        if let responseString = String(data: data, encoding: .utf8) {
+                            print("Response Body: \(responseString)")
+                        }
+                        let sets = try JSONDecoder().decode([CardSet].self, from: data)
+                        print(sets)
+                        
+                        // Add missing sets to localSets
+                        let newSets = sets.filter { set in
+                            !localSets.contains { $0.id == set.id }
+                        }
+                        localSets.append(contentsOf: newSets)
+                    }
+                    
+                    // Update sets after localSets have been modified
+                    updateSets()
+                } catch {
+                    print("Failed to sync sets: \(error.localizedDescription)")
                 }
             }
-            do{
-                try await updateSets()
-            }catch{
-                
-            }
-            print(localSets)
+        } else {
+            print("Token retrieval failed")
         }
     }
     
-    func updateSets() async throws {
+    func updateSets() {
         if let token = retrieveToken(){
-            let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/update/sets")!
-            var request = URLRequest(url: apiURL)
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            request.httpMethod = "PATCH"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            
-            request.httpBody = try JSONEncoder().encode(["sets": localSets])
-            
-            let (_, response) = try await URLSession.shared.data(for: request)
-            
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                throw URLError(.badServerResponse)
+            guard let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/update/sets") else {
+                print("Invalid URL")
+                return
+            }
+            Task{
+                do{
+                    var request = URLRequest(url: apiURL)
+                    request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+                    request.httpMethod = "PATCH"
+                    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    
+                    request.httpBody = try JSONEncoder().encode(["sets": localSets])
+                    
+                    let (_, response) = try await URLSession.shared.data(for: request)
+                    
+                    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                        throw URLError(.badServerResponse)
+                    }
+                }catch{
+                    print("Failed to update sets: \(error.localizedDescription)")
+                }
             }
         }
     }
-    func updateSet(_ set: CardSet) async throws{
+    func updateSet(_ set: CardSet){
         if let token = retrieveToken(){
-            let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/update/"+set.id.uuidString)!
-            var request = URLRequest(url: apiURL)
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            request.httpMethod = "PUT"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            
-            request.httpBody = try JSONEncoder().encode(set)
-            
-            let (_, response) = try await URLSession.shared.data(for: request)
-            
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                throw URLError(.badServerResponse)
+            guard let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/update/"+set.id.uuidString) else {
+                print("Invalid URL")
+                return
+            }
+            Task{
+                do{
+                    var request = URLRequest(url: apiURL)
+                    request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+                    request.httpMethod = "PUT"
+                    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    
+                    request.httpBody = try JSONEncoder().encode(set)
+                    
+                    let (_, response) = try await URLSession.shared.data(for: request)
+                    
+                    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                        throw URLError(.badServerResponse)
+                    }
+                }catch{
+                    print("Failed to update set: \(error.localizedDescription)")
+                }
             }
         }
     }
-    func deleteSet(_ set: CardSet) async throws{
+    func deleteSet(_ set: CardSet){
         if let token = retrieveToken(){
-            let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/delete/"+set.id.uuidString)!
-            var request = URLRequest(url: apiURL)
-            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-            request.httpMethod = "DELETE"
-            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-            
-            
-            let (_, response) = try await URLSession.shared.data(for: request)
-            
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 204 else {
-                throw URLError(.badServerResponse)
+            guard let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/delete/"+set.id.uuidString) else {
+                print("Invalid URL")
+                return
+            }
+            Task{
+                do{
+                    var request = URLRequest(url: apiURL)
+                    request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+                    request.httpMethod = "DELETE"
+                    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+                    
+                    
+                    let (_, response) = try await URLSession.shared.data(for: request)
+                    
+                    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 204 else {
+                        throw URLError(.badServerResponse)
+                    }
+                }catch{
+                    print("Failed to delete set: \(error.localizedDescription)")
+                }
             }
         }
     }
