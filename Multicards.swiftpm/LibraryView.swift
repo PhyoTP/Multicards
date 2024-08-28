@@ -2,7 +2,7 @@ import SwiftUI
 
 struct LibraryView: View{
     @EnvironmentObject var userManager: UserManager
-    @StateObject var localSetsManager = LocalSetsManager()
+    @EnvironmentObject var localSetsManager: LocalSetsManager
     @State private var showSheet = false
     var userData: UserData
     var body: some View{

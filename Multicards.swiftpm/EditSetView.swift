@@ -8,7 +8,6 @@ struct EditSetView: View {
     @State var showAlert = false
     @State var alertDesc = ""
     var localSetsManager: LocalSetsManager
-    var setsManager = SetsManager()
     var body: some View {
         Form {
             Section("Details") {
@@ -97,10 +96,10 @@ struct EditSetView: View {
                 }
             }
             .onAppear(){
-                
+                columns = set.convertToColumns()
             }
             Section {
-                Button("Create") {
+                Button("Save") {
                     let names = columns.map { $0.name }
                     if set.name.isEmpty {
                         showAlert = true
@@ -114,11 +113,10 @@ struct EditSetView: View {
                     } else {
                         set.convertColumns(columns)
                         set.creator = userData.name
-                        localSetsManager.localSets.append(set)
                         dismiss()
                         localSetsManager.sync()
                         if set.isPublic{
-                            setsManager.postSet(set)
+                            localSetsManager.updateSet(set)
                         }
                         
                         
@@ -136,3 +134,6 @@ struct EditSetView: View {
     }
 }
 
+#Preview{
+    EditSetView(set: .constant(CardSet(name: "", cards: [], creator: "", isPublic: true)), userData: UserData(), localSetsManager: LocalSetsManager())
+}

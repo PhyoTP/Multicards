@@ -6,6 +6,17 @@ struct CardSet: Codable, Identifiable{
     var cards: [Card]
     var creator: String
     var isPublic: Bool
+    func keys() -> [String]{
+        var tempKey: [String] = []
+        for i in cards{
+            for j in i.sides.keys{
+                if !tempKey.contains(j){
+                    tempKey.append(j)
+                }
+            }
+        }
+        return tempKey
+    }
     mutating func convertColumns(_ columns: [Column]){
         var tempCards: [Card] = []
         let names: [String] = columns.map{ $0.name }
@@ -18,6 +29,26 @@ struct CardSet: Codable, Identifiable{
             }
         }
         self.cards = tempCards
+    }
+    func convertToColumns() -> [Column] {
+        var tempColumns: [Column] = []
+        
+        // Initialize columns with the keys
+        for key in keys() {
+            tempColumns.append(Column(name: key, values: []))
+        }
+        
+        // Fill in the values for each column
+        for card in self.cards {
+            for (sideName, sideValue) in card.sides {
+                // Find the corresponding column by name and append the value
+                if let columnIndex = tempColumns.firstIndex(where: { $0.name == sideName }) {
+                    tempColumns[columnIndex].values.append(sideValue)
+                }
+            }
+        }
+        
+        return tempColumns
     }
 }
 struct Card: Codable, Identifiable{
