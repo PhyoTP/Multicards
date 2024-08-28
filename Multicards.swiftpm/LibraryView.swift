@@ -24,10 +24,9 @@ struct LibraryView: View{
                 }
             }
             .refreshable {
-                Task {
-                    try await userManager.login()
-                    try await localSetsManager.sync()
-                }
+                userManager.relogin()
+                localSetsManager.sync()
+                
             }
         }
         .sheet(isPresented:$showSheet){

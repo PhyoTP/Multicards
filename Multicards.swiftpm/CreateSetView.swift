@@ -2,7 +2,6 @@ import SwiftUI
 
 struct CreateSetView: View {
     @State var set: CardSet = CardSet(name: "", cards: [Card(sides: ["": ""])], creator: "", isPublic: false)
-    @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
     @State var showSheet = false
     @State private var columns: [Column] = [Column(name: "", values: [""]),Column(name: "", values: [""])]

@@ -21,9 +21,9 @@ struct ContentView: View {
                     }.tag(3)
             }
             .onAppear(){
-                Task{
-                    try await userManager.login()
-                }
+                
+                userManager.relogin()
+                
             }
         } else {
             StartView(userData: userData)

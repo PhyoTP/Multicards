@@ -2,104 +2,136 @@ import SwiftUI
 
 struct EditSetView: View {
     @Binding var set: CardSet
-    @Environment(\.colorScheme) var colorScheme
     @Environment(\.dismiss) var dismiss
+    @State private var columns: [Column] = [Column(name: "", values: [""]),Column(name: "", values: [""])]
+    var userData: UserData
+    @State var showAlert = false
+    @State var alertDesc = ""
+    var localSetsManager: LocalSetsManager
+    var setsManager = SetsManager()
     var body: some View {
         Form {
-            // Title section
-            TextField("Title", text: $set.name)
+            Section("Details") {
+                TextField("Title", text: $set.name)
+                if userData.isLoggedIn {
+                    Toggle("Public", isOn: $set.isPublic)
+                }
+            }
             
             Section("Table") {
+                
                 ScrollView(.horizontal) {
-                    VStack(alignment: .leading) {
-                        // Use a Grid for better column alignment
-                        Grid(horizontalSpacing: 10, verticalSpacing: 10) {
-                            // Header row with editable keys
-                            GridRow {
-                                // Enumerate over the keys so we can access both index and value
-                                ForEach(Array(set.keys().enumerated()), id: \.element) { (index, key) in
-                                    TextField("Dimension", text: Binding(
-                                        get: { set.keys()[index] },
-                                        set: { newKey in
-                                            updateKey(at: index, with: newKey)
+                    HStack {
+                        Grid {
+                            GridRow{
+                                Text("Dimension")
+                                    .fontWeight(.medium)
+                                    .offset(x:-30)
+                                Spacer()
+                                Rectangle()
+                                    .fill(Color(uiColor: .systemGray3))
+                                    .frame(width: 3)
+                                ForEach(0..<numCards(columns), id: \.self){num in
+                                    Button{
+                                        for i in columns.indices{
+                                            columns[i].values.remove(at: num)
                                         }
-                                    ))
-                                    .padding()
-                                    .fontWeight(.bold)
-                                    .frame(width: 200, height: 40)
-                                    .background(colorScheme == .dark ? Color.black : Color.gray)
-                                    .cornerRadius(10)
+                                    }label: {
+                                        Image(systemName: "minus.circle.fill")
+                                            .foregroundStyle(.red)
+                                    }
+                                    Spacer()
                                 }
-                                
-                                // "+" Button to add a new key
-                                Button("Add dimension",systemImage: "plus") {
-                                    addNewKey()
-                                } 
-                                .padding()
+                                Button("Add card", systemImage: "plus") {
+                                    for i in columns.indices {
+                                        columns[i].values.append("")
+                                    }
+                                }
+                            }
+                            ForEach($columns) { $column in
+                                Divider()
+                                GridRow {
+                                    TextField("Dimension", text: $column.name)
+                                        .fontWeight(.medium)
+                                    if columns.firstIndex(where: { $0.id == column.id })! > 1 {
+                                        Button {
+                                            if let index = columns.firstIndex(where: { $0.id == column.id }) {
+                                                columns.remove(at: index)
+                                            }
+                                        } label: {
+                                            Image(systemName: "minus.circle.fill")
+                                                .foregroundStyle(.red)
+                                        }
+                                    }else{
+                                        Button{
+                                            
+                                        }label:{
+                                            Image(systemName: "minus.circle")
+                                                .foregroundStyle(.clear)
+                                        }
+                                    }
+                                    
+                                    Rectangle()
+                                        .fill(Color(uiColor: .systemGray3))
+                                        .frame(width: 3)
+                                    
+                                    ForEach($column.values.indices, id: \.self) { index in
+                                        TextField("Value", text: $column.values[index])
+                                        if index != column.values.count-1{
+                                            HStack { Divider() }
+                                        }
+                                    }
+                                }
                             }
                             
-                            // Rows for cards' values
-                            ForEach($set.cards) { $card in
-                                GridRow {
-                                    ForEach(set.keys(), id: \.self) { key in
-                                        TextField("Enter value", text: Binding(
-                                            get: { card.sides[key] ?? "" },
-                                            set: { newValue in card.sides[key] = newValue }
-                                        ))
-                                        .padding()
-                                        .frame(width: 200, height: 40)
-                                        .background(colorScheme == .dark ? Color.black : Color.gray)
-                                        .cornerRadius(10)
-                                    }
+                            GridRow {
+                                Button("Add dimension", systemImage: "plus") {
+                                    let numCards = columns.map { $0.values.count }.max() ?? 0
+                                    let newColumn = Column(name: "New Dimension", values: Array(repeating: "", count: numCards))
+                                    columns.append(newColumn)
                                 }
                             }
                         }
                         
-                        // "+" Button to add a new card
-                        Button("Add card",systemImage: "plus") {
-                            addNewCard()
-                        } 
-                        .padding()
                     }
                 }
             }
-            Section{
-                Button("Save"){
-                    
+            .onAppear(){
+                
+            }
+            Section {
+                Button("Create") {
+                    let names = columns.map { $0.name }
+                    if set.name.isEmpty {
+                        showAlert = true
+                        alertDesc = "Title cannot be blank"
+                    } else if names.contains("") {
+                        showAlert = true
+                        alertDesc = "Dimension name cannot be blank"
+                    } else if numCards(columns) == 0{
+                        showAlert = true
+                        alertDesc = "Must have at least one card"
+                    } else {
+                        set.convertColumns(columns)
+                        set.creator = userData.name
+                        localSetsManager.localSets.append(set)
+                        dismiss()
+                        localSetsManager.sync()
+                        if set.isPublic{
+                            setsManager.postSet(set)
+                        }
+                        
+                        
+                    }
                 }
-                Button("Cancel", role: .destructive){
+                Button("Cancel", role: .destructive) {
                     dismiss()
                 }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-    
-    // Function to add a new key to all cards
-    func addNewKey() {
-        let newKey = "New Dimension"
-        
-        // Add the new key to every card's sides
-        for index in set.cards.indices {
-            set.cards[index].sides[newKey] = ""
-        }
-    }
-    
-    // Function to add a new card
-    func addNewCard() {
-        let newCard = Card(sides: [:])
-        set.cards.append(newCard)
-    }
-    
-    // Function to update a key in all cards
-    func updateKey(at index: Int, with newKey: String) {
-        let oldKey = set.keys()[index]
-        
-        // Update the key in all cards
-        for cardIndex in set.cards.indices {
-            if let value = set.cards[cardIndex].sides.removeValue(forKey: oldKey) {
-                set.cards[cardIndex].sides[newKey] = value
-            }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Error"), message: Text(alertDesc), dismissButton: .default(Text("OK")))
         }
     }
 }

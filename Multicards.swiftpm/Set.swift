@@ -4,31 +4,6 @@ struct CardSet: Codable, Identifiable{
     var id = UUID()
     var name: String
     var cards: [Card]
-    func keys() -> [String]{
-        var tempKey: [String] = []
-        for i in cards{
-            for j in i.sides.keys{
-                if !tempKey.contains(j){
-                    tempKey.append(j)
-                }
-            }
-        }
-        return tempKey
-    }
-    func table()->[String:[String]]{
-        var returnTable: [String:[String]]=[:]
-        for i in keys(){
-            returnTable[i]=[]
-            for j in cards{
-                if let thing = j.sides[i]{
-                    returnTable[i]?.append(thing)
-                }else{
-                    returnTable[i]?.append("")
-                }
-            }
-        }
-        return returnTable
-    }
     var creator: String
     var isPublic: Bool
     mutating func convertColumns(_ columns: [Column]){

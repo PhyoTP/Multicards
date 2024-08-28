@@ -98,7 +98,7 @@ class LocalSetsManager: ObservableObject {
         if let token = retrieveToken() {
             print(token)
             
-            guard let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/userdata") else {
+            guard let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/userdata/sets") else {
                 print("Invalid URL")
                 return
             }

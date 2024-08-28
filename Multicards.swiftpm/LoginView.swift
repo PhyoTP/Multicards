@@ -16,7 +16,7 @@ struct LoginView: View{
                 Button("Log in"){
                     Task {
                         do {
-                            try await userManager.login()
+                            try userManager.login()
                             userData.isLoggedIn = true
                             userData.done = true
                             userData.name = userManager.user.username
