@@ -22,11 +22,12 @@ struct ContentView: View {
                     .tabItem {
                         Label("Settings", systemImage: "gear")
                     }.tag(3)
+                    .environmentObject(localSetsManager)
+                    .environmentObject(userManager)
             }
             .onAppear(){
-                
                 userManager.relogin()
-                
+                selection = 2
             }
         } else {
             StartView(userData: userData)

@@ -7,8 +7,31 @@ struct LibraryView: View{
     var userData: UserData
     var body: some View{
         NavigationStack{
-            List($localSetsManager.localSets, editActions: .all){ $set in
-                Text(set.name)
+            List{
+                ForEach($localSetsManager.localSets){ $set in
+                    NavigationLink(destination: {
+                        if set.creator == userData.name {
+                            if let localSetIndex = localSetsManager.localSets.firstIndex(where: { $0.id == set.id }) {
+                                LocalSetView(set: $localSetsManager.localSets[localSetIndex])
+                            } else {
+                                Text("Set not found locally")
+                            }
+                        } else {
+                            SetView(set: set)
+                                .environmentObject(localSetsManager)
+                        }
+                    }) {
+                        Text(set.name)
+                    }
+                }
+                .onDelete(perform: { indexSet in
+                    localSetsManager.sync()
+                    localSetsManager.localSets.remove(atOffsets: indexSet)
+                    localSetsManager.updateSets()
+                    for i in indexSet{
+                        localSetsManager.deleteSet(localSetsManager.localSets[i])
+                    }
+                })
             }
             .navigationTitle("Library")
             .toolbar(){
@@ -26,7 +49,6 @@ struct LibraryView: View{
             .refreshable {
                 userManager.relogin()
                 localSetsManager.sync()
-                
             }
         }
         .sheet(isPresented:$showSheet){

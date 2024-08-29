@@ -19,6 +19,7 @@ struct HomeView: View{
                                 }
                             } else {
                                 SetView(set: set)
+                                    .environmentObject(localSetsManager)
                             }
                         }) {
                             Text(set.name)

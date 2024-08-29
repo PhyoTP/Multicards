@@ -21,13 +21,10 @@ struct LocalSetView: View{
                     Button{
                         
                     }label: {
-                        if starred{
-                            Image(systemName: "star.fill")
-                        }else{
-                            Image(systemName: "star")
-                        }
+                        Image(systemName: "ellipsis.circle")
                     }
                 }
+                
             }
         }
     }
