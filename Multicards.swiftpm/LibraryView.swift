@@ -49,12 +49,23 @@ struct LibraryView: View{
                 }
             }
             .refreshable {
-                userManager.relogin()
-                localSetsManager.sync()
+                load()
+            }
+            .onAppear(){
+                load()
             }
         }
         .sheet(isPresented:$showSheet){
             CreateSetView(userData: userData, localSetsManager: localSetsManager)
         }
+    }
+    func load(){
+        for i in localSetsManager.localSets.indices{
+            if localSetsManager.localSets[i].creator == "You"{
+                localSetsManager.localSets[i].creator = userData.name
+            }
+        }
+        userManager.relogin()
+        localSetsManager.sync()
     }
 }

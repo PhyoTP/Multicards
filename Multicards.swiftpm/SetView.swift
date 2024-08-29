@@ -1,50 +1,81 @@
 import SwiftUI
 
-struct SetView: View{
+struct SetView: View {
     @State var starred = false
     var set: CardSet
-    @State var columns: [Column] = []
     @EnvironmentObject var localSetsManager: LocalSetsManager
-    var body: some View{
-        NavigationStack{
-            Form{
-                
+    
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("info"){
+                    Text("Made by "+set.creator)
+                }
+                Section("Table"){
+                    ScrollView(.horizontal){
+                        Grid {
+                            // Column Headers
+                            GridRow {
+                                ForEach(set.keys(), id: \.self) { key in
+                                    if key != set.keys()[0]{
+                                        HStack{Divider()}
+                                    }
+                                    Text(key)
+                                        .bold()
+                                }
+                            }
+                            
+                            
+                            // Card rows
+                            ForEach(set.cards) { card in
+                                Divider()
+                                GridRow {
+                                    ForEach(set.keys(), id: \.self) { key in
+                                        if key != set.keys()[0]{
+                                            HStack{Divider()}
+                                        }
+                                        Text(card.sides[key] ?? "")
+                                    }
+                                }
+                            }
+                        }
+                        .padding()
+                    }
+                }
             }
-            .toolbar(){
-                ToolbarItem(placement: .topBarTrailing){
-                    Button{
-                        
-                    }label: {
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        // Action for play button
+                    } label: {
                         Image(systemName: "play")
                     }
                 }
-                ToolbarItem(placement: .topBarTrailing){
-                    if starred{
-                        Button{
+                ToolbarItem(placement: .topBarTrailing) {
+                    if starred {
+                        Button {
                             starred = false
-                            localSetsManager.sync()
-                            if let index = localSetsManager.localSets.firstIndex(where: {$0.id == set.id}){
+                            if let index = localSetsManager.localSets.firstIndex(where: { $0.id == set.id }) {
                                 localSetsManager.localSets.remove(at: index)
+                                localSetsManager.updateSets()
                             }
-                            localSetsManager.updateSets()
-                        }label: {
+                        } label: {
                             Image(systemName: "star.fill")
                         }
-                    }else{
-                        Button{
+                    } else {
+                        Button {
                             starred = true
                             localSetsManager.localSets.append(set)
-                            localSetsManager.sync()
-                        }label: {
+                            localSetsManager.updateSets()
+                        } label: {
                             Image(systemName: "star")
                         }
                     }
-                    
                 }
             }
             .navigationTitle(set.name)
-            .onAppear(){
-                if localSetsManager.localSets.contains(where: {$0.id == set.id}){
+            .onAppear {
+                if localSetsManager.localSets.contains(where: { $0.id == set.id }) {
                     starred = true
                 }
             }

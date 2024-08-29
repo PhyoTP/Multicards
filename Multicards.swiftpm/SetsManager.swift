@@ -93,10 +93,10 @@ class LocalSetsManager: ObservableObject {
     }
     
     func sync() {
-        print("syncing")
+//        print("syncing")
         
         if let token = retrieveToken() {
-            print(token)
+//            print(token)
             
             guard let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/userdata/sets") else {
                 print("Invalid URL")
@@ -113,7 +113,7 @@ class LocalSetsManager: ObservableObject {
                     
                     // Validate response
                     if let httpResponse = response as? HTTPURLResponse{
-                        print("HTTP Status code: \(httpResponse.statusCode)")
+                        print("Syncing HTTP Status code: \(httpResponse.statusCode)")
                         guard httpResponse.statusCode == 200 else {
                             throw URLError(.badServerResponse)
                         }
@@ -122,10 +122,10 @@ class LocalSetsManager: ObservableObject {
                     // Decode and update sets on the main thread
                     try await MainActor.run {
                         if let responseString = String(data: data, encoding: .utf8) {
-                            print("Response Body: \(responseString)")
+                            print("Syncing Response Body: \(responseString)")
                         }
                         let sets = try JSONDecoder().decode([CardSet].self, from: data)
-                        print(sets)
+//                        print(sets)
                         
                         // Add missing sets to localSets
                         let newSets = sets.filter { set in
@@ -215,7 +215,7 @@ class LocalSetsManager: ObservableObject {
                     let (_, response) = try await URLSession.shared.data(for: request)
                     
                     if let httpResponse = response as? HTTPURLResponse{
-                        print("HTTP Status code: \(httpResponse.statusCode)")
+                        print("Delete HTTP Status code: \(httpResponse.statusCode)")
                         guard httpResponse.statusCode == 204 else {
                             throw URLError(.badServerResponse)
                         }
