@@ -16,6 +16,10 @@ struct HomeView: View{
                                     LocalSetView(set: $localSetsManager.localSets[localSetIndex])
                                 } else {
                                     Text("Set not found locally")
+                                        .onAppear(){
+                                            localSetsManager.localSets.append(set)
+                                            localSetsManager.sync()
+                                        }
                                 }
                             } else {
                                 SetView(set: set)

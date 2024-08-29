@@ -25,6 +25,7 @@ struct LoginView: View{
                             errorOccurred = true
                         }
                     }
+                    dismiss()
                 }
                 Button("Cancel",role: .destructive){
                     dismiss()

@@ -26,6 +26,7 @@ struct LocalSetView: View{
                 }
                 
             }
+            .navigationTitle(set.name)
         }
     }
 }

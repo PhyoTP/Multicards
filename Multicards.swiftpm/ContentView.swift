@@ -21,6 +21,7 @@ struct ContentView: View {
                 SettingsView(userData: userData)
                     .tabItem {
                         Label("Settings", systemImage: "gear")
+                            .symbolRenderingMode(.palette)
                     }.tag(3)
                     .environmentObject(localSetsManager)
                     .environmentObject(userManager)

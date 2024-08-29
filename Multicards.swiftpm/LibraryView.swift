@@ -25,12 +25,14 @@ struct LibraryView: View{
                     }
                 }
                 .onDelete(perform: { indexSet in
-                    localSetsManager.sync()
+                    for i in indexSet{
+                        if localSetsManager.localSets[i].isPublic{
+                            localSetsManager.deleteSet(localSetsManager.localSets[i])
+                        }
+                    }
                     localSetsManager.localSets.remove(atOffsets: indexSet)
                     localSetsManager.updateSets()
-                    for i in indexSet{
-                        localSetsManager.deleteSet(localSetsManager.localSets[i])
-                    }
+                    
                 })
             }
             .navigationTitle("Library")

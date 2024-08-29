@@ -189,6 +189,7 @@ class LocalSetsManager: ObservableObject {
                     let (_, response) = try await URLSession.shared.data(for: request)
                     
                     guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                        
                         throw URLError(.badServerResponse)
                     }
                 }catch{
@@ -213,8 +214,11 @@ class LocalSetsManager: ObservableObject {
                     
                     let (_, response) = try await URLSession.shared.data(for: request)
                     
-                    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 204 else {
-                        throw URLError(.badServerResponse)
+                    if let httpResponse = response as? HTTPURLResponse{
+                        print("HTTP Status code: \(httpResponse.statusCode)")
+                        guard httpResponse.statusCode == 204 else {
+                            throw URLError(.badServerResponse)
+                        }
                     }
                 }catch{
                     print("Failed to delete set: \(error.localizedDescription)")

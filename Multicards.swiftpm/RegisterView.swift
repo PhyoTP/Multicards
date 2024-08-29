@@ -24,6 +24,7 @@ struct RegisterView: View{
                         errorOccurred = true
                         
                     }
+                    dismiss()
                 }
                 Button("Cancel",role: .destructive){
                     dismiss()

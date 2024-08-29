@@ -124,7 +124,7 @@ struct CreateSetView: View {
                         if set.isPublic{
                             setsManager.postSet(set)
                         }
-                        
+                        setsManager.getSets()
                         
                     }
                 }
