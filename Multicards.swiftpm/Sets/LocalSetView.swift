@@ -27,10 +27,14 @@ struct LocalSetView: View{
                                 }
                             }
                             
-                            
+                            Rectangle()
+                                .fill(Color(uiColor: .systemGray3))
+                                .frame(height: 3)
                             // Card rows
                             ForEach(set.cards) { card in
-                                Divider()
+                                if card.id != set.cards[0].id{
+                                    Divider()
+                                }
                                 GridRow {
                                     ForEach(set.keys(), id: \.self) { key in
                                         if key != set.keys()[0]{

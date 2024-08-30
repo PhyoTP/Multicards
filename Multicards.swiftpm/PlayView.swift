@@ -4,73 +4,105 @@ struct PlayView: View {
     var set: CardSet
     @State var questionSelected: [Column] = []
     @State var answerSelected: [Column] = []
-    @State var questionSelectable: [Column] = []
-    @State var answerSelectable: [Column] = []
+    @State var showAlert = false
+    @State var alertDesc = ""
     var body: some View {
-        Form {
-            Section {
-                Menu("Question cards") {
-                    ForEach(questionSelectable) { column in
-                        
-                            if questionSelected.contains(column) {
+        NavigationStack{
+            Form {
+                Section {
+                    Menu("Question cards") {
+                        ForEach(set.convertToColumns()){column in
+                            if questionSelected.contains(where: {$0.name == column.name}){
                                 
-                                    Button{
-                                        if let index = questionSelected.firstIndex(where: { $0.id == column.id }) {
-                                            questionSelected.remove(at: index)
-                                        }
-                                    }label: {
-                                        Text(column.name)
-                                        Image(systemName: "checkmark")
-                                    }
-                                                                    
-                            } else {
-                                Button(column.name) {
-                                    questionSelected.append(column)
-                                }
-                            }
-                        
-                    }
-                    .onAppear {
-                        questionSelectable = set.convertToColumns().filter { !answerSelected.contains($0) }
-                    }
-                }
-                .onAppear {
-                    questionSelectable = set.convertToColumns().filter { !answerSelected.contains($0) }
-                }
-            }
-            
-            Menu("Answer cards") {
-                ForEach(answerSelectable) { column in
-                    
-                        if answerSelected.contains(column) {
-                            
-                            Button{
-                                    if let index = answerSelected.firstIndex(where: { $0.id == column.id }) {
-                                        answerSelected.remove(at: index)
-                                    }
-                                }label:{
+                                Button{
+                                    
+                                    questionSelected.removeAll(where: {$0.name == column.name})
+                                    print(questionSelected)
+                                    
+                                }label: {
                                     Text(column.name)
                                     Image(systemName: "checkmark")
                                 }
-                            
-                        } else {
-                            Button(column.name) {
-                                answerSelected.append(column)
+                                
+                                
+                            }else{
+                                Button(column.name){
+                                    questionSelected.append(column)
+                                    print(questionSelected)
+                                }
                             }
                         }
-                    
+                    }
+                    ForEach(questionSelected){column in
+                        Text(column.name) 
+                    }
+                    Menu("Answer cards") {
+                        ForEach(set.convertToColumns()){column in
+                            if answerSelected.contains(where: {$0.name == column.name}){
+                                
+                                Button{
+                                    
+                                    answerSelected.removeAll(where: {$0.name == column.name})
+                                    print(answerSelected)
+                                    
+                                }label: {
+                                    Text(column.name)
+                                    Image(systemName: "checkmark")
+                                }
+                                
+                                
+                            }else{
+                                Button(column.name){
+                                    answerSelected.append(column)
+                                    print(answerSelected)
+                                }
+                            }
+                        }
+                    }
+                    ForEach(answerSelected){column in
+                        Text(column.name) 
+                    }
                 }
-                .onAppear {
-                    answerSelectable = set.convertToColumns().filter { !questionSelected.contains($0) }
+                
+                
+                
+                
+                Section("Mode") {
+                    Button{
+                        if questionSelected.isEmpty || answerSelected.isEmpty{
+                            showAlert = true
+                            alertDesc = "Card sides cannot be empty"
+                        }else{
+                            
+                        }
+                    }label: {
+                        Label("Flashcards", systemImage: "rectangle.stack")
+                    }
+                    Button{
+                        if questionSelected.isEmpty || answerSelected.isEmpty{
+                            showAlert = true
+                            alertDesc = "Card sides cannot be empty"
+                        }else{
+                            
+                        }
+                    }label: {
+                        Label("Match", systemImage: "rectangle.grid.3x2")
+                    }
+                    Button{
+                        if questionSelected.isEmpty || answerSelected.isEmpty{
+                            showAlert = true
+                            alertDesc = "Card sides cannot be empty"
+                        }else{
+                            
+                        }
+                    }label: {
+                        Label("Write", systemImage: "rectangle.and.pencil.and.ellipsis")
+                    }
                 }
             }
-            .onAppear {
-                answerSelectable = set.convertToColumns().filter { !questionSelected.contains($0) }
-            }
-            
-            
-            Section("Mode") {
-                // Add other controls
+            .navigationTitle("Play")
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Error"), message: Text(alertDesc), dismissButton: .default(Text("OK")))
             }
         }
     }
