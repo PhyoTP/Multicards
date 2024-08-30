@@ -108,7 +108,7 @@ struct PlayView: View {
                 Alert(title: Text("Error"), message: Text(alertDesc), dismissButton: .default(Text("OK")))
             }
             .sheet(isPresented: $flashcards) {
-                FlashcardsView(cards: prepareCards(questions: questionSelected, answers: answerSelected))
+                FlashcardsView(questions: questionSelected, answers: answerSelected)
             }
             .sheet(isPresented: $match) {
                 MatchView(cards: prepareCards(questions: questionSelected, answers: answerSelected))
