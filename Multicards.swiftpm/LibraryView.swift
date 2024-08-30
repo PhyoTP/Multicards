@@ -12,7 +12,8 @@ struct LibraryView: View{
                     NavigationLink(destination: {
                         if set.creator == userData.name {
                             if let localSetIndex = localSetsManager.localSets.firstIndex(where: { $0.id == set.id }) {
-                                LocalSetView(set: $localSetsManager.localSets[localSetIndex])
+                                LocalSetView(set: $localSetsManager.localSets[localSetIndex], userData: userData)
+                                    .environmentObject(localSetsManager)
                             } else {
                                 Text("Set not found locally")
                             }

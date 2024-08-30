@@ -3,6 +3,10 @@ import SwiftUI
 struct LocalSetView: View{
     @State var starred = false
     @Binding var set: CardSet
+    @State var showSheet = false
+    var userData: UserData
+    @EnvironmentObject var localSetsManager: LocalSetsManager
+    @StateObject var setsManager = SetsManager()
     var body: some View{
         NavigationStack{
             Form{
@@ -50,8 +54,25 @@ struct LocalSetView: View{
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing){
-                    Button{
-                        
+                    Menu{
+                        Button("Edit set"){
+                            showSheet = true
+                        }
+                        if set.isPublic{
+                            Button("Set to private"){
+                                set.isPublic = false
+                                localSetsManager.sync()
+                                localSetsManager.deleteSet(set)
+                                setsManager.getSets()
+                            }
+                        }else{
+                            Button("Set to public"){
+                                set.isPublic = true
+                                localSetsManager.sync()
+                                setsManager.postSet(set)
+                                setsManager.getSets()
+                            }
+                        }
                     }label: {
                         Image(systemName: "ellipsis.circle")
                     }
@@ -59,6 +80,9 @@ struct LocalSetView: View{
                 
             }
             .navigationTitle(set.name)
+        }
+        .sheet(isPresented: $showSheet){
+            EditSetView(set: $set, userData: userData, localSetsManager: localSetsManager)
         }
     }
 }
