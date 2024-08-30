@@ -45,8 +45,8 @@ struct SetView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        // Action for play button
+                    NavigationLink {
+                        PlayView(set: set)
                     } label: {
                         Image(systemName: "play")
                     }

@@ -39,7 +39,11 @@ struct HomeView: View{
                                     .environmentObject(localSetsManager)
                             }
                         }) {
-                            Text(set.name)
+                            VStack{
+                                Text(set.name)
+                                Text("By "+set.creator)
+                                    .font(.caption)
+                            }
                         }
                     }
                     .navigationTitle(userData.isLoggedIn ? "Hello, " + userData.name : "Multicards")
