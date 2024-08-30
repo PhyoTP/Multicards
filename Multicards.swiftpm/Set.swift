@@ -111,4 +111,42 @@ func numCards(_ columns: [Column])->Int{
     return tempCards
 }
 
-
+func convertToCards(_ columns: [Column])->[Card]{
+    var tempCards: [Card] = []
+    let names: [String] = columns.map{ $0.name }
+    for _ in 0..<numCards(columns){
+        tempCards.append(Card(sides: [:]))
+    }
+    for i in names{
+        for j in tempCards.indices{
+            tempCards[j].sides[i] = findColumn(columns, name: i).values[j]
+        }
+    }
+    return tempCards
+}
+func combineColumns(_ columns: [Column])->Column{
+    var tempColumn = Column(name: "", values: [])
+    for i in columns{
+        if tempColumn.name.isEmpty{
+            tempColumn.name += i.name
+        }else{
+            tempColumn.name += ", " + i.name
+        }
+    }
+    for i in columns{
+        if i == columns[0]{
+            tempColumn.values = i.values
+        }else{
+            for j in i.values.indices{
+                tempColumn.values[j] += ", " + i.values[j]
+            }
+        }
+    }
+    return tempColumn
+}
+func prepareCards(questions: [Column], answers: [Column])->[Card]{
+    let questionColumn = combineColumns(questions)
+    let answerColumn = combineColumns(answers)
+    return convertToCards([questionColumn, answerColumn])
+}
+ 

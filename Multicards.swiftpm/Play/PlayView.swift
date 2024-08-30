@@ -6,6 +6,9 @@ struct PlayView: View {
     @State var answerSelected: [Column] = []
     @State var showAlert = false
     @State var alertDesc = ""
+    @State var flashcards = false
+    @State var match = false
+    @State var write = false
     var body: some View {
         NavigationStack{
             Form {
@@ -73,7 +76,7 @@ struct PlayView: View {
                             showAlert = true
                             alertDesc = "Card sides cannot be empty"
                         }else{
-                            
+                            flashcards = true
                         }
                     }label: {
                         Label("Flashcards", systemImage: "rectangle.stack")
@@ -83,7 +86,7 @@ struct PlayView: View {
                             showAlert = true
                             alertDesc = "Card sides cannot be empty"
                         }else{
-                            
+                            match = true
                         }
                     }label: {
                         Label("Match", systemImage: "rectangle.grid.3x2")
@@ -93,7 +96,7 @@ struct PlayView: View {
                             showAlert = true
                             alertDesc = "Card sides cannot be empty"
                         }else{
-                            
+                            write = true
                         }
                     }label: {
                         Label("Write", systemImage: "rectangle.and.pencil.and.ellipsis")
@@ -103,6 +106,15 @@ struct PlayView: View {
             .navigationTitle("Play")
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Error"), message: Text(alertDesc), dismissButton: .default(Text("OK")))
+            }
+            .sheet(isPresented: $flashcards) {
+                FlashcardsView(cards: prepareCards(questions: questionSelected, answers: answerSelected))
+            }
+            .sheet(isPresented: $match) {
+                MatchView(cards: prepareCards(questions: questionSelected, answers: answerSelected))
+            }
+            .sheet(isPresented: $write) {
+                WriteView(cards: prepareCards(questions: questionSelected, answers: answerSelected))
             }
         }
     }
