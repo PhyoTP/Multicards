@@ -51,7 +51,7 @@ struct CardSet: Codable, Identifiable{
         return tempColumns
     }
 }
-struct Card: Codable, Identifiable{
+struct Card: Codable, Identifiable, Hashable{
     var id = UUID()
     var sides: [String: String] 
 }
