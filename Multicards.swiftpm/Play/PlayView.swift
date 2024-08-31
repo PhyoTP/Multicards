@@ -113,7 +113,7 @@ struct PlayView: View {
                 FlashcardsView(questions: questionSelected, answers: answerSelected)
             }
             .sheet(isPresented: $match) {
-                MatchView(cards: prepareCards(questions: questionSelected, answers: answerSelected))
+                MatchView(questions: questionSelected, answers: answerSelected)
             }
             .sheet(isPresented: $write) {
                 WriteView(cards: prepareCards(questions: questionSelected, answers: answerSelected))

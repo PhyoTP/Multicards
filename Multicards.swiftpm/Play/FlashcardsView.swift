@@ -87,7 +87,9 @@ struct FlashcardsView: View {
                             }
                             .frame(width: 200, height: 400)
                             .background(Color(uiColor: .systemGray4))
-                            .clipShape(RoundedRectangle(cornerSize: CGSize(width: 20, height: 10)))
+                            .mask{
+                                RoundedRectangle(cornerRadius: 20)
+                            }
                             .gesture(
                                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
                                     .onEnded({value in
