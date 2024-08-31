@@ -16,37 +16,48 @@ struct MatchView: View{
         tempColumn.values = Array(tempColumn.values.prefix(num))
         return tempColumn
     }
+    var chosenCards: [Card]{
+        return Array(cards.shuffled().prefix(8))
+    }
+    var cardArray: [(String, String, UUID)]{
+        var tempArray: [(String, String, UUID)] = []
+        for i in chosenCards{
+            tempArray.append((question.name, i.sides[question.name] ?? "", UUID()))
+        }
+        for i in chosenCards{
+            tempArray.append((answer.name, i.sides[answer.name] ?? "", UUID()))
+        }
+        return tempArray.shuffled()
+    }
+    let columns = [GridItem(.adaptive(minimum: 80))]
+    @State var selectedQuestion: (String, String)?
+    @State var selectedAnswer: (String, String)?
+    @State var properties: [(Double, Bool, UUID)] = []
     var body: some View{
-        Grid{
-            GridRow{
-                ForEach(chosenValues(question, num: 3).values, id: \.self){value in
+        LazyVGrid(columns: columns){
+            ForEach(cardArray, id: \.2){card in
+                Button{
+                    
+                }label: {
+                    
                     VStack{
-                        Text(question.name)
-                        Text(value)
-                    }
-                    .frame(width: 100, height: 200)
-                    .background(Color(uiColor: .systemGray3))
-                    .mask{
-                        RoundedRectangle(cornerRadius: 20)
+                        Text(card.0)
+                        Text(card.1)
                     }
                 }
-            }
-            GridRow{
-                ForEach(chosenValues(answer, num: 3).values, id: \.self){value in
-                    VStack{
-                        Text(answer.name)
-                        Text(value)
-                    }
-                    .frame(width: 100, height: 200)
-                    .background(Color(uiColor: .systemGray3))
-                    .mask{
-                        RoundedRectangle(cornerRadius: 20)
-                    }
+                .frame(width: 90, height: 135)
+                .background(Color(uiColor: (properties.first(where: {$0.2 == card.2})?.1) ?? false ? .systemGray4 : .systemGray6))
+                .mask{
+                    RoundedRectangle(cornerRadius: 10)
                 }
+                .opacity((properties.first(where: {$0.2 == card.2})?.0) ?? 1)
             }
         }
         .onAppear(){
             cards = prepareCards(questions: questions, answers: answers)
+            for i in cardArray{
+                properties.append((1, false, i.2))
+            }
         }
         .multilineTextAlignment(.center)
     }
