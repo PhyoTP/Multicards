@@ -32,6 +32,7 @@ struct FlashcardsView: View {
                         know = []
                         dontKnow = []
                         cards = prepareCards(questions: questions, answers: answers)
+                        last = []
                     }
                     .frame(width: 200)
                     .padding()
@@ -43,6 +44,7 @@ struct FlashcardsView: View {
                             cards = dontKnow
                             know = []
                             dontKnow = []
+                            last = []
                         }
                         .frame(width: 200)
                         .padding()
@@ -91,17 +93,31 @@ struct FlashcardsView: View {
                                     .onEnded({value in
                                         if value.translation.width < 0{
                                             withAnimation(){
-                                                know.append(card)
-                                                last.append(true)
-                                                                                   }
-                                            
+                                                if tapped{
+                                                    dontKnow.append(card)
+                                                    last.append(false)
+                                                }else{
+                                                    know.append(card)
+                                                    last.append(true)
+                                                }
+                                                
+                                                                                            }
+                                            tapped = false
+                                            rotation = 0
                                         }
                                         if value.translation.width > 0{
                                             withAnimation(){
-                                                dontKnow.append(card)
-                                                last.append(false)
-                                                                               }
-                                            
+                                                if tapped{
+                                                    know.append(card)
+                                                    last.append(true)
+                                                }else{
+                                                    dontKnow.append(card)
+                                                    last.append(false)
+                                                }
+                                                
+                                                                                            }
+                                            tapped = false
+                                            rotation = 0
                                         }
                                     })
                             )
@@ -118,16 +134,16 @@ struct FlashcardsView: View {
                                 Angle(degrees: rotation), axis: (x: 0.0, y: 1.0, z: 0.0)
                             )
                             .offset(x: 
-                                        know.contains(where: {$0.id==card.id}) ? 
+                                know.contains(where: {$0.id==card.id}) ? 
                                     tapped ?
-                                    500 :
+                                        -500 :
                                         -500 
                                     : 
-                                        dontKnow.contains(where: {$0.id==card.id}) ?
-                                    tapped ? 
-                                    -500 : 
-                                        500 
-                                    :
+                                    dontKnow.contains(where: {$0.id==card.id}) ?
+                                        tapped ? 
+                                            500 : 
+                                            500 
+                                        :
                                         0
                                     
                             )
@@ -136,13 +152,14 @@ struct FlashcardsView: View {
                     if !last.isEmpty{
                         Button("Undo", systemImage: "arrow.counterclockwise") {
                             withAnimation {
-                                if last.last ?? true && !know.isEmpty {
+                                if last.last == true && !know.isEmpty {
                                     know.remove(at: know.count - 1)
                                     last.remove(at: last.count-1)
-                                } else if !dontKnow.isEmpty {
+                                }else if last.last == false && !dontKnow.isEmpty {
                                     dontKnow.remove(at: dontKnow.count - 1)
                                     last.remove(at: last.count-1)
                                 }
+                                print(last)
                             }
                         }
                         
