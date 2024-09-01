@@ -20,7 +20,7 @@ struct PlayView: View {
                                 Button{
                                     
                                     questionSelected.removeAll(where: {$0.name == column.name})
-                                    print(questionSelected)
+                                    
                                     
                                 }label: {
                                     Text(column.name)
@@ -31,7 +31,7 @@ struct PlayView: View {
                             }else{
                                 Button(column.name){
                                     questionSelected.append(column)
-                                    print(questionSelected)
+                                    
                                 }
                             }
                         }
@@ -46,7 +46,7 @@ struct PlayView: View {
                                 Button{
                                     
                                     answerSelected.removeAll(where: {$0.name == column.name})
-                                    print(answerSelected)
+                                    
                                     
                                 }label: {
                                     Text(column.name)
@@ -57,7 +57,7 @@ struct PlayView: View {
                             }else{
                                 Button(column.name){
                                     answerSelected.append(column)
-                                    print(answerSelected)
+                                    
                                 }
                             }
                         }
