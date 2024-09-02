@@ -86,7 +86,7 @@ struct FlashcardsView: View {
                                 }
                             }
                             .frame(width: 200, height: 400)
-                            .background(Color(uiColor: .systemGray4))
+                            .background(Color(.systemGray4))
                             .mask{
                                 RoundedRectangle(cornerRadius: 20)
                             }

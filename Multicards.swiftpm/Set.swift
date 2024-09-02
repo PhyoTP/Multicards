@@ -54,6 +54,20 @@ struct CardSet: Codable, Identifiable{
 struct Card: Codable, Identifiable, Hashable{
     var id = UUID()
     var sides: [String: String] 
+    var newSides: [Side]{
+        var tempSides: [Side] = []
+        for (i, j) in sides{
+            tempSides.append(Side(cardID: id, title: i, value: j))
+        }
+        return tempSides
+    }
+}
+struct Side: Hashable{
+    var cardID: UUID
+    var title: String
+    var value: String
+    var color: UIColor = .systemGray4
+    var opacity = 1
 }
 struct Column: Identifiable, Equatable{
     var id = UUID()
@@ -78,20 +92,30 @@ func convertStringToColumns(input: String, termSeparator: TermSeparator, cardSep
     // Split the string into cards based on the card separator
     let rawCards = input.components(separatedBy: cardSeparator.rawValue)
     
-    var columns: [Column] = [Column(name: "Term", values: []),Column(name: "Definition", values: [])]
+    var columns: [Column] = []
+    var columnCount = 0
     
     for card in rawCards {
-        // Split each card into term and definition based on the term separator
-        let components = card.components(separatedBy: termSeparator.rawValue)
+        // Split each card into terms based on the term separator
+        let components = card.components(separatedBy: termSeparator.rawValue).map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
         
-        if components.count == 2 {
-            columns[0].values.append(components[0].trimmingCharacters(in: .whitespacesAndNewlines))
-            columns[1].values.append(components[1].trimmingCharacters(in: .whitespacesAndNewlines))
+        // Ensure the columns array has enough columns to accommodate all components
+        if components.count > columnCount {
+            for i in columnCount..<components.count {
+                columns.append(Column(name: "Dimension \(i + 1)", values: []))
+            }
+            columnCount = components.count
+        }
+        
+        // Append each component to the corresponding column
+        for i in components.indices {
+            columns[i].values.append(components[i])
         }
     }
     
     return columns
 }
+
 
 func findColumn(_ columns: [Column], name: String)->Column{
     for i in columns{

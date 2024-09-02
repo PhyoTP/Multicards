@@ -44,7 +44,9 @@ struct HomeView: View{
                                 Text("By "+set.creator)
                                     .font(.caption)
                             }
+                            
                         }
+                        
                     }
                     .navigationTitle(userData.isLoggedIn ? "Hello, " + userData.name : "Multicards")
                     .refreshable{

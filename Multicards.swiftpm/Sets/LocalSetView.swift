@@ -28,7 +28,7 @@ struct LocalSetView: View{
                             }
                             
                             Rectangle()
-                                .fill(Color(uiColor: .systemGray3))
+                                .fill(Color(.systemGray3))
                                 .frame(height: 3)
                             // Card rows
                             ForEach(set.cards) { card in

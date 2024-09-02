@@ -82,16 +82,16 @@ struct PlayView: View {
                         Label("Flashcards", systemImage: "rectangle.stack")
                     }
                     
-                        Button{
-                            if questionSelected.isEmpty || answerSelected.isEmpty{
-                                showAlert = true
-                                alertDesc = "Card sides cannot be empty"
-                            }else{
-                                match = true
-                            }
-                        }label: {
-                            Label("Match", systemImage: "rectangle.grid.3x2")
+                    Button{
+                        if questionSelected.isEmpty || answerSelected.isEmpty{
+                            showAlert = true
+                            alertDesc = "Card sides cannot be empty"
+                        }else{
+                            match = true
                         }
+                    }label: {
+                        Label("Match", systemImage: "rectangle.grid.3x2")
+                    }
                     
                     Button{
                         if questionSelected.isEmpty || answerSelected.isEmpty{
