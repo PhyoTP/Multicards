@@ -6,14 +6,56 @@ struct MatchView: View {
     var answers: [Column]
     
     @State var cardGrid: [[Side]] = []
-    
+    @State var selected: Side?
     var body: some View {
         Grid {
-            ForEach(cardGrid, id: \.self) { row in
+            ForEach($cardGrid, id: \.self) { $row in
                 GridRow {
-                    ForEach(row, id: \.self) { side in
+                    ForEach($row) { $side in
                         Button{
-                            
+                            if let select = selected{
+                                if select.id == side.id{
+                                    side.color = .systemGray4
+                                    print("unselect")
+                                }else if side.cardID == select.cardID{
+                                    side.color = .green
+                                    withAnimation(){
+                                        side.opacity = 0
+                                    }
+                                    for i in cardGrid.indices{
+                                        if let index = cardGrid[i].firstIndex(where: {$0.cardID == side.cardID}){
+                                            print("found")
+                                            cardGrid[i][index].color = .green
+                                            withAnimation(){
+                                                cardGrid[i][index].opacity = 0
+                                            }
+                                        }
+                                        
+                                    }
+                                    print("correct")
+                                }else{
+                                    side.color = .red
+                                    withAnimation(){
+                                        side.color = .systemGray4
+                                    }
+                                    for i in cardGrid.indices{
+                                        if let index = cardGrid[i].firstIndex(where: {$0.cardID == side.cardID}){
+                                            print("found")
+                                            cardGrid[i][index].color = .red
+                                            withAnimation(){
+                                                cardGrid[i][index].color = .systemGray4
+                                            }
+                                            
+                                        }
+                                    }
+                                    print("wrong")
+                                }
+                                selected = nil
+                            }else{
+                                selected = side
+                                side.color = .systemGray
+                                print("new")
+                            }
                         }label:{
                             VStack{
                                 Text(side.title)
@@ -33,13 +75,14 @@ struct MatchView: View {
         }
         .onAppear{
             cards = Array(prepareCards(questions: questions, answers: answers).shuffled().prefix(8))
-            var allSides: [Side] = []
+                var allSides: [Side] = []
+                
+                for card in cards {
+                    allSides.append(contentsOf: card.newSides)
+                }
+                
+                allSides.shuffle()
             
-            for card in cards {
-                allSides.append(contentsOf: card.newSides)
-            }
-            
-            allSides.shuffle()
             
             // Dynamically create rows based on the number of sides
             let columnsPerRow = (cards.count == 6) ? 3 : (cards.count == 8) ? 4 : 2

@@ -62,7 +62,8 @@ struct Card: Codable, Identifiable, Hashable{
         return tempSides
     }
 }
-struct Side: Hashable{
+struct Side: Identifiable, Hashable{
+    var id = UUID()
     var cardID: UUID
     var title: String
     var value: String
