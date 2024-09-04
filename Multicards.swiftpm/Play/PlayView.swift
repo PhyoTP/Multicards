@@ -116,7 +116,7 @@ struct PlayView: View {
                 MatchView(questions: questionSelected, answers: answerSelected)
             }
             .sheet(isPresented: $write) {
-                WriteView(cards: prepareCards(questions: questionSelected, answers: answerSelected))
+                WriteView(questions: questionSelected, answers: answerSelected)
             }
         }
     }

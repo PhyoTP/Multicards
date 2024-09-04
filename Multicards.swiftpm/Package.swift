@@ -8,17 +8,19 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "My App",
+    name: "Multicards",
     platforms: [
-        .iOS("17.5")
+        .iOS("17.0")
     ],
     products: [
         .iOSApplication(
-            name: "My App",
+            name: "Multicards",
             targets: ["AppModule"],
+            bundleIdentifier: "tech.phyotp.multicards",
+            teamIdentifier: "P6PV2R9443",
             displayVersion: "1.0",
-            bundleVersion: "1",
-            appIcon: .placeholder(icon: .flower),
+            bundleVersion: "2",
+            appIcon: .asset("AppIcon"),
             accentColor: .presetColor(.blue),
             supportedDeviceFamilies: [
                 .pad,
@@ -29,7 +31,8 @@ let package = Package(
                 .landscapeRight,
                 .landscapeLeft,
                 .portraitUpsideDown(.when(deviceFamilies: [.pad]))
-            ]
+            ],
+            appCategory: .education
         )
     ],
     targets: [
