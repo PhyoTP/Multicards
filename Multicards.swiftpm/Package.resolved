@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "shiny",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/maustinstar/shiny",
+      "state" : {
+        "revision" : "8bb38bf8122d5b144ac0c09258c30aab46dcac7e",
+        "version" : "0.0.1"
+      }
+    }
+  ],
+  "version" : 2
+}

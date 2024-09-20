@@ -14,17 +14,21 @@ struct RegisterView: View{
             }
             Section{
                 Button("Register"){
-                    do{
-                        try userManager.register()
-                        userData.isLoggedIn = true
-                        userData.done = true
-                        userData.name = userManager.user.username
-                    } catch {
-                        errorDesc = error.localizedDescription
-                        errorOccurred = true
+                    Task{
+                        do{
+                            try await userManager.register()
+                            userData.isLoggedIn = true
+                            userData.done = true
+                            userData.name = userManager.user.username
+                            dismiss()
+                        } catch {
+                            errorDesc = userManager.error
+                            errorOccurred = true
+                            
+                        }
                         
                     }
-                    dismiss()
+                    
                 }
                 Button("Cancel",role: .destructive){
                     dismiss()

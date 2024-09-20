@@ -81,7 +81,13 @@ struct LocalSetView: View{
                         Image(systemName: "ellipsis.circle")
                     }
                 }
-                
+                if set.isPublic{
+                    ToolbarItem(placement: .topBarTrailing){
+                        Link(destination: URL(string: "https://multicards.phyotp.dev/#/set/"+set.id.uuidString)!){
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    }
+                }
             }
             .navigationTitle(set.name)
         }

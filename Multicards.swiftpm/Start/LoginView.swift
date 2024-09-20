@@ -16,16 +16,18 @@ struct LoginView: View{
                 Button("Log in"){
                     Task {
                         do {
-                            try userManager.login()
+                            try await userManager.login()
                             userData.isLoggedIn = true
                             userData.done = true
                             userData.name = userManager.user.username
+                            dismiss()
                         } catch {
-                            errorDesc = error.localizedDescription
+                            errorDesc = userManager.error
                             errorOccurred = true
                         }
+                        
                     }
-                    dismiss()
+                    
                 }
                 Button("Cancel",role: .destructive){
                     dismiss()

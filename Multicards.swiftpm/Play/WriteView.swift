@@ -1,75 +1,120 @@
 import SwiftUI
 
 struct WriteView: View {
-    @State var masteringQuestions: [Column] = []
-    @State var masteringAnswers: [Column] = []
+    @State var cards: [Card] = []
     var questions: [Column]
     var answers: [Column]
-    @State var currentCard = 0
-    @State var givenAnswers: [String]
-    @State var showAlert = false
-    @State var alertDesc = ""
-    init(questions: [Column], answers: [Column]) {
-        // Initialize the givenAnswers array with an empty string for each card
-        givenAnswers = Array(repeating: "", count: questions[0].values.count)
-        
-        self.questions = questions
-        self.answers = answers
+    var question: Column {
+        combineColumns(questions)
     }
+    var answer: Column {
+        combineColumns(answers)
+    }
+    @State var know: [Card] = []
+    @State var dontKnow: [Card] = []
+    @State var done: [Card] = []
+    @Environment(\.dismiss) var dismiss
+    @State var texts: [String] = []
+    @State var showAlert = false
+    @State var wrongAnswers: [String] = []
     
     var body: some View {
-        if currentCard < prepareCards(questions: questions, answers: answers).count {
-            Form {
-                Section{
-                    ForEach(questions) { question in
-                        Text(question.name + ": " + question.values[currentCard])
+        Group {
+            if Set(cards).isSubset(of: Set(know + dontKnow)) {
+                VStack{
+                    Button("Close"){
+                        dismiss()
                     }
-                    ForEach(answers.indices) { index in
-                        HStack {
-                            Text(answers[index].name + ":")
-                            TextField("Answer", text: $givenAnswers[index])
+                    .frame(width: 200)
+                    .padding()
+                    .background(.blue)
+                    .foregroundStyle(.white)
+                    .cornerRadius(10)
+                    Button("Try again"){
+                        know = []
+                        dontKnow = []
+                        cards = prepareCards(questions: questions, answers: answers)
+                        done = []
+                    }
+                    .frame(width: 200)
+                    .padding()
+                    .background(.blue)
+                    .foregroundStyle(.white)
+                    .cornerRadius(10)
+                    if !dontKnow.isEmpty{
+                        Button("Try again with unknown"){
+                            cards = dontKnow
+                            know = []
+                            dontKnow = []
+                            done = []
                         }
+                        .frame(width: 200)
+                        .padding()
+                        .background(.blue)
+                        .foregroundStyle(.white)
+                        .cornerRadius(10)
                     }
                 }
-                Section{
-                    Button("Check"){
-                        for i in answers.indices{
-                            if answers[i].values[currentCard].trimmingCharacters(in: .whitespaces) != givenAnswers[i].trimmingCharacters(in: .whitespaces) {
-                                showAlert = true
-                                alertDesc += answers[i].name + ": " + answers[i].values[currentCard] + "\n"
+            } else {
+                ZStack {
+                    ForEach(cards) { card in
+                        Form {
+                            Section("Questions") {
+                                Text(question.name)
+                                Text(card.sides[question.name] ?? "")
+                            }
+                            Section("Answers") {
+                                ForEach(answers.indices, id: \.self) { index in
+                                    HStack {
+                                        Text(answers[index].name)
+                                        TextField("Enter", text: $texts[index])
+                                    }
+                                }
+                            }
+                            Section {
+                                Button("Submit") {
+                                    var wrongAnswersLocal: [String] = []
+                                    for (index, text) in texts.enumerated() {
+                                        let trimmedInput = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                                        let correctAnswer = card.sides[answers[index].name]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                                        
+                                        if trimmedInput != correctAnswer {
+                                            wrongAnswersLocal.append("\(answers[index].name): \(correctAnswer)")
+                                        }
+                                    }
+                                    
+                                    if wrongAnswersLocal.isEmpty {
+                                        know.append(card)
+                                    } else {
+                                        wrongAnswers = wrongAnswersLocal
+                                        showAlert = true
+                                    }
+                                    
+                                    done.append(card)
+                                    texts = Array(repeating: "", count: answers.count)
+                                }
+                                .alert("Wrong answer", isPresented: $showAlert) {
+                                    Button("I'm correct") {
+                                        know.append(card)
+                                    }
+                                    Button("Ok", role: .cancel) {
+                                        dontKnow.append(card)
+                                    }
+                                } message: {
+                                    if !wrongAnswers.isEmpty {
+                                        Text("Incorrect Answers:\n" + wrongAnswers.joined(separator: "\n"))
+                                    }
+                                }
                             }
                         }
-                        if showAlert{
-                            alertDesc = String(alertDesc.dropLast(1))
-                        }else{
-                         
-                            currentCard += 1
-                            givenAnswers = Array(repeating: "", count: questions[0].values.count)
-                            
-                        }
-                        
+                        .opacity(done.contains(where: { $0.id == card.id }) ? 0 : 1)
                     }
                 }
             }
-            .alert("Wrong answers", isPresented: $showAlert) {
-                
-                Button("I'm correct"){
-                    currentCard += 1
-                    alertDesc = ""
-                    givenAnswers = Array(repeating: "", count: questions[0].values.count)
-                }
-                Button("Ok", role: .cancel){
-                    currentCard += 1
-                    alertDesc = ""
-                    givenAnswers = Array(repeating: "", count: questions[0].values.count)
-                }
-                
-            }message: {
-                Text(alertDesc)
-            }
-        } else {
-            // Handle when all cards have been processed
-            Text("All cards completed!")
+        }
+        .onAppear() {
+            cards = prepareCards(questions: questions, answers: answers)
+            texts = Array(repeating: "", count: answers.count)
         }
     }
 }

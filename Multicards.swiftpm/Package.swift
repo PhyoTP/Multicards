@@ -10,7 +10,7 @@ import AppleProductTypes
 let package = Package(
     name: "Multicards",
     platforms: [
-        .iOS("17.0")
+        .iOS("17.5")
     ],
     products: [
         .iOSApplication(
@@ -19,7 +19,7 @@ let package = Package(
             bundleIdentifier: "tech.phyotp.multicards",
             teamIdentifier: "P6PV2R9443",
             displayVersion: "1.0",
-            bundleVersion: "2",
+            bundleVersion: "3",
             appIcon: .asset("AppIcon"),
             accentColor: .presetColor(.blue),
             supportedDeviceFamilies: [
@@ -35,9 +35,15 @@ let package = Package(
             appCategory: .education
         )
     ],
+    dependencies: [
+        .package(url: "https://github.com/maustinstar/shiny", "0.0.1"..<"1.0.0")
+    ],
     targets: [
         .executableTarget(
             name: "AppModule",
+            dependencies: [
+                .product(name: "Shiny", package: "shiny")
+            ],
             path: ".",
             resources: [
                 .process("Resources")

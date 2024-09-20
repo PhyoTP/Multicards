@@ -103,7 +103,7 @@ struct FlashcardsView: View {
                                                     last.append(true)
                                                 }
                                                 
-                                                                                            }
+                                            }
                                             tapped = false
                                             rotation = 0
                                         }
@@ -117,7 +117,7 @@ struct FlashcardsView: View {
                                                     last.append(false)
                                                 }
                                                 
-                                                                                            }
+                                            }
                                             tapped = false
                                             rotation = 0
                                         }
@@ -136,16 +136,16 @@ struct FlashcardsView: View {
                                 Angle(degrees: rotation), axis: (x: 0.0, y: 1.0, z: 0.0)
                             )
                             .offset(x: 
-                                know.contains(where: {$0.id==card.id}) ? 
+                                        know.contains(where: {$0.id==card.id}) ? 
                                     tapped ?
-                                        -500 :
+                                    -500 :
                                         -500 
                                     : 
-                                    dontKnow.contains(where: {$0.id==card.id}) ?
-                                        tapped ? 
-                                            500 : 
-                                            500 
-                                        :
+                                        dontKnow.contains(where: {$0.id==card.id}) ?
+                                    tapped ? 
+                                    500 : 
+                                        500 
+                                    :
                                         0
                                     
                             )

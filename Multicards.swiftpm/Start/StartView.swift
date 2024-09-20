@@ -1,4 +1,5 @@
 import SwiftUI
+import Shiny
 
 struct StartView: View {
     var userData: UserData
@@ -9,6 +10,7 @@ struct StartView: View {
         VStack {
             Text("Welcome to Multicards")
                 .font(.system(size: 34, weight: .bold, design: .rounded))
+                .shiny()
             Button("Log in to PhyoID") {
                 login = true
             }
