@@ -175,3 +175,8 @@ func prepareCards(questions: [Column], answers: [Column])->[Card]{
     return convertToCards([questionColumn, answerColumn])
 }
  
+struct SetCover: Identifiable, Codable{
+    var id: UUID
+    var name: String
+    var creator: String
+}

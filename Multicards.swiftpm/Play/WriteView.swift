@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct WriteView: View {
-    @State var cards: [Card] = []
+    @State private var cards: [Card] = []
     var questions: [Column]
     var answers: [Column]
     var question: Column {
@@ -10,13 +10,13 @@ struct WriteView: View {
     var answer: Column {
         combineColumns(answers)
     }
-    @State var know: [Card] = []
-    @State var dontKnow: [Card] = []
-    @State var done: [Card] = []
+    @State private var know: [Card] = []
+    @State private var dontKnow: [Card] = []
+    @State private var done: [Card] = []
     @Environment(\.dismiss) var dismiss
-    @State var texts: [String] = []
-    @State var showAlert = false
-    @State var wrongAnswers: [String] = []
+    @State private var texts: [String] = []
+    @State private var showAlert = false
+    @State private var wrongAnswers: [String] = []
     
     var body: some View {
         Group {

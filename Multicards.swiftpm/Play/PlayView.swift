@@ -2,13 +2,13 @@ import SwiftUI
 
 struct PlayView: View {
     var set: CardSet
-    @State var questionSelected: [Column] = []
-    @State var answerSelected: [Column] = []
-    @State var showAlert = false
-    @State var alertDesc = ""
-    @State var flashcards = false
-    @State var match = false
-    @State var write = false
+    @State private var questionSelected: [Column] = []
+    @State private var answerSelected: [Column] = []
+    @State private var showAlert = false
+    @State private var alertDesc = ""
+    @State private var flashcards = false
+    @State private var match = false
+    @State private var write = false
     var body: some View {
         NavigationStack{
             Form {

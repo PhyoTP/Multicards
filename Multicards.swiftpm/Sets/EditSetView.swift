@@ -5,16 +5,13 @@ struct EditSetView: View {
     @Environment(\.dismiss) var dismiss
     @State private var columns: [Column] = [Column(name: "", values: [""]),Column(name: "", values: [""])]
     var userData: UserData
-    @State var showAlert = false
-    @State var alertDesc = ""
-    var localSetsManager: LocalSetsManager
+    @State private var showAlert = false
+    @State private var alertDesc = ""
+    @EnvironmentObject var localSetsManager: LocalSetsManager
     var body: some View {
         Form {
             Section("Details") {
                 TextField("Title", text: $set.name)
-                if userData.isLoggedIn {
-                    Toggle("Public", isOn: $set.isPublic)
-                }
             }
             
             Section("Table") {
@@ -60,6 +57,4 @@ struct EditSetView: View {
     }
 }
 
-#Preview{
-    EditSetView(set: .constant(CardSet(name: "", cards: [], creator: "", isPublic: true)), userData: UserData(), localSetsManager: LocalSetsManager())
-}
+

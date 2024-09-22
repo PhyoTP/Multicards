@@ -1,15 +1,15 @@
 import SwiftUI
 
 struct CreateSetView: View {
-    @State var set: CardSet = CardSet(name: "", cards: [Card(sides: ["": ""])], creator: "", isPublic: false)
+    @State private var set: CardSet = CardSet(name: "", cards: [Card(sides: ["": ""])], creator: "", isPublic: false)
     @Environment(\.dismiss) var dismiss
-    @State var showSheet = false
+    @State private var showSheet = false
     @State private var columns: [Column] = [Column(name: "", values: [""]),Column(name: "", values: [""])]
     var userData: UserData
-    @State var showAlert = false
-    @State var alertDesc = ""
-    var localSetsManager: LocalSetsManager
-    var setsManager = SetsManager()
+    @State private var showAlert = false
+    @State private var alertDesc = ""
+    @EnvironmentObject var localSetsManager: LocalSetsManager
+    @EnvironmentObject var setsManager: SetsManager
     var body: some View {
         Form {
             Section("Details") {
@@ -68,7 +68,4 @@ struct CreateSetView: View {
         }
     }
 }
-#Preview{
-    CreateSetView(userData: UserData(), localSetsManager: LocalSetsManager())
-        .preferredColorScheme(.light)
-}
+

@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct LocalSetView: View{
-    @State var starred = false
+    @State private var starred = false
     @Binding var set: CardSet
-    @State var showSheet = false
+    @State private var showSheet = false
     var userData: UserData
     @EnvironmentObject var localSetsManager: LocalSetsManager
-    @StateObject var setsManager = SetsManager()
+    @EnvironmentObject var setsManager: SetsManager
     var body: some View{
         NavigationStack{
             Form{
@@ -83,7 +83,7 @@ struct LocalSetView: View{
                 }
                 if set.isPublic{
                     ToolbarItem(placement: .topBarTrailing){
-                        Link(destination: URL(string: "https://multicards.phyotp.dev/#/set/"+set.id.uuidString)!){
+                        ShareLink(item: URL(string: "https://multicards.phyotp.dev/#/set/"+set.id.uuidString)!){
                             Image(systemName: "square.and.arrow.up")
                         }
                     }
@@ -92,7 +92,8 @@ struct LocalSetView: View{
             .navigationTitle(set.name)
         }
         .sheet(isPresented: $showSheet){
-            EditSetView(set: $set, userData: userData, localSetsManager: localSetsManager)
+            EditSetView(set: $set, userData: userData)
+                .environmentObject(localSetsManager)
         }
     }
 }

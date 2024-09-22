@@ -4,8 +4,8 @@ struct LoginView: View{
     @Environment(\.dismiss) var dismiss
     var userData: UserData
     @EnvironmentObject var userManager: UserManager
-    @State var errorOccurred = false
-    @State var errorDesc = ""
+    @State private var errorOccurred = false
+    @State private var errorDesc = ""
     var body: some View{
         Form{
             Section("Log in"){

@@ -3,8 +3,8 @@ import Shiny
 
 struct StartView: View {
     var userData: UserData
-    @State var login = false
-    @State var register = false
+    @State private var login = false
+    @State private var register = false
     @EnvironmentObject var userManager: UserManager
     var body: some View {
         VStack {

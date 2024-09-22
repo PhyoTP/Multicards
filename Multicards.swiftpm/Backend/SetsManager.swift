@@ -2,11 +2,12 @@ import Foundation
 import SwiftUI
 
 class SetsManager: ObservableObject {
-    @Published var sets: [CardSet]?
+    @Published var sets: [SetCover]?
     
-    let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets")!
+    
     
     func getSets() {
+        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/test/multicards/sets")!
         sets = nil
         Task {
             do {
@@ -14,15 +15,27 @@ class SetsManager: ObservableObject {
                 
                 
                 try await MainActor.run {
-                    self.sets = try JSONDecoder().decode([CardSet].self, from: data)
+                    self.sets = try JSONDecoder().decode([SetCover].self, from: data)
                 }
             } catch {
                 print("Failed to fetch sets: \(error.localizedDescription)")
             }
         }
     }
-    
+    func getSet(_ id: UUID) async throws -> CardSet {
+        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/set/" + id.uuidString)!
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(from: apiURL)
+            return try JSONDecoder().decode(CardSet.self, from: data)
+            
+        } catch {
+            print("Failed to fetch set: \(error.localizedDescription)")
+            throw URLError(.badServerResponse)
+        }
+    }
     func postSet(_ set: CardSet) {
+        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/test/multicards/sets")!
         Task {
             do {
                 var request = URLRequest(url: apiURL)

@@ -3,26 +3,28 @@ import SwiftUI
 struct LibraryView: View{
     @EnvironmentObject var userManager: UserManager
     @EnvironmentObject var localSetsManager: LocalSetsManager
+    @EnvironmentObject var setsManager: SetsManager
     @State private var showSheet = false
     var userData: UserData
     var body: some View{
         NavigationStack{
             List{
-                ForEach($localSetsManager.localSets){ $set in
+                ForEach(localSetsManager.localSets){ localSet in
                     NavigationLink(destination: {
-                        if set.creator == userData.name {
-                            if let localSetIndex = localSetsManager.localSets.firstIndex(where: { $0.id == set.id }) {
+                        if let localSetIndex = localSetsManager.localSets.firstIndex(where: { $0.id == localSet.id }) {
+                            if localSet.creator == userData.name{
                                 LocalSetView(set: $localSetsManager.localSets[localSetIndex], userData: userData)
                                     .environmentObject(localSetsManager)
-                            } else {
-                                Text("Set not found locally")
+                            }else{
+                                SetView(setID: localSetsManager.localSets[localSetIndex].id)
+                                    .environmentObject(localSetsManager)
+                                    .environmentObject(setsManager)
                             }
                         } else {
-                            SetView(set: set)
-                                .environmentObject(localSetsManager)
+                            Text("Set not found locally")
                         }
                     }) {
-                        Text(set.name)
+                        Text(localSet.name)
                     }
                 }
                 .onDelete(perform: { indexSet in
@@ -57,7 +59,9 @@ struct LibraryView: View{
             }
         }
         .sheet(isPresented:$showSheet){
-            CreateSetView(userData: userData, localSetsManager: localSetsManager)
+            CreateSetView(userData: userData)
+                .environmentObject(localSetsManager)
+                .environmentObject(setsManager)
         }
     }
     func load(){

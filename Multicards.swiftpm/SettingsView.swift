@@ -2,11 +2,11 @@ import SwiftUI
 
 struct SettingsView: View{
     var userData: UserData
-    @State var showAlert = false
+    @State private var showAlert = false
     @EnvironmentObject var userManager: UserManager
     @EnvironmentObject var localSetsManager: LocalSetsManager
-    @State var login = false
-    @State var register = false
+    @State private var login = false
+    @State private var register = false
     var body: some View{
         NavigationStack{
             Form{

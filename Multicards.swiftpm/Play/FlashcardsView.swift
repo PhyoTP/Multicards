@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct FlashcardsView: View {
-    @State var cards: [Card] = []
+    @State private var cards: [Card] = []
     var questions: [Column]
     var answers: [Column]
     var question: Column {
@@ -10,11 +10,11 @@ struct FlashcardsView: View {
     var answer: Column {
         combineColumns(answers)
     }
-    @State var tapped = false
-    @State var rotation = 0.0
-    @State var know: [Card] = []
-    @State var dontKnow: [Card] = []
-    @State var last: [Bool] = []
+    @State private var tapped = false
+    @State private var rotation = 0.0
+    @State private var know: [Card] = []
+    @State private var dontKnow: [Card] = []
+    @State private var last: [Bool] = []
     @Environment(\.dismiss) var dismiss
     var body: some View {
         Group{

@@ -1,12 +1,12 @@
 import SwiftUI
 
 struct HomeView: View{
-    @StateObject var setsManager = SetsManager()
+    @EnvironmentObject var setsManager: SetsManager
     @EnvironmentObject var localSetsManager: LocalSetsManager
     var userData: UserData
-    @State var localSetID = UUID()
-    @State var input = ""
-    var filteredSets: [CardSet]{
+    @State private var localSetID = UUID()
+    @State private var input = ""
+    var filteredSets: [SetCover]{
         if let sets = setsManager.sets{
             if input.isEmpty{
                 return sets
@@ -27,16 +27,20 @@ struct HomeView: View{
                                 if let localSetIndex = localSetsManager.localSets.firstIndex(where: { $0.id == set.id }) {
                                     LocalSetView(set: $localSetsManager.localSets[localSetIndex], userData: userData)
                                         .environmentObject(localSetsManager)
+                                        .environmentObject(setsManager)
                                 } else {
                                     Text("Set not found locally")
                                         .onAppear(){
-                                            localSetsManager.localSets.append(set)
+                                            Task{
+                                                try await localSetsManager.localSets.append(setsManager.getSet(set.id))
+                                            }
                                             localSetsManager.sync()
                                         }
                                 }
                             } else {
-                                SetView(set: set)
+                                SetView(setID: set.id)
                                     .environmentObject(localSetsManager)
+                                    .environmentObject(setsManager)
                             }
                         }) {
                             VStack{

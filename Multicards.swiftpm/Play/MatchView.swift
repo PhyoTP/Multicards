@@ -1,17 +1,17 @@
 import SwiftUI
 
 struct MatchView: View {
-    @State var cards: [Card] = []
+    @State private var cards: [Card] = []
     var questions: [Column]
     var answers: [Column]
-    @State var cardGrid: [[Side]] = []
-    @State var selected: Side?
-    @State var startTime = Date()
-    @State var elapsedTime: TimeInterval = 0
-    @State var timer: Timer?
-    @State var count = 0
-    @State var best: TimeInterval = 0
-    @State var done = false
+    @State private var cardGrid: [[Side]] = []
+    @State private var selected: Side?
+    @State private var startTime = Date()
+    @State private var elapsedTime: TimeInterval = 0
+    @State private var timer: Timer?
+    @State private var count = 0
+    @State private var best: TimeInterval = 0
+    @State private var done = false
     var body: some View {
         if done{
             VStack{

@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct ImportView: View{
-    @State var text = ""
-    @State var selectedTermSeparator = TermSeparator.tab
-    @State var selectedCardSeparator = CardSeparator.newline
+    @State private var text = ""
+    @State private var selectedTermSeparator = TermSeparator.tab
+    @State private var selectedCardSeparator = CardSeparator.newline
     @Environment(\.dismiss) var dismiss
     @Binding var result: [Column]
     var body: some View{
