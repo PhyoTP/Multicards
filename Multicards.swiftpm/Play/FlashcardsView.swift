@@ -15,11 +15,15 @@ struct FlashcardsView: View {
     @State private var know: [Card] = []
     @State private var dontKnow: [Card] = []
     @State private var last: [Bool] = []
+    @State private var count = 0
     @Environment(\.dismiss) var dismiss
     var body: some View {
         Group{
             if Set(cards).isSubset(of: Set(know + dontKnow)){
                 VStack{
+                    Spacer()
+                    DonutChartView(total: prepareCards(questions: questions, answers: answers).count, know: count)
+                    Spacer()
                     Button("Close"){
                         dismiss()
                     }
@@ -33,6 +37,7 @@ struct FlashcardsView: View {
                         dontKnow = []
                         cards = prepareCards(questions: questions, answers: answers)
                         last = []
+                        count = 0
                     }
                     .frame(width: 200)
                     .padding()
@@ -52,6 +57,10 @@ struct FlashcardsView: View {
                         .foregroundStyle(.white)
                         .cornerRadius(10)
                     }
+                    Spacer()
+                }
+                .onAppear(){
+                    count += know.count
                 }
             }else{
                 VStack{

@@ -91,9 +91,12 @@ struct MatchView: View {
                                     VStack{
                                         Text(side.title)
                                             .fontWeight(.medium)
+                                            .minimumScaleFactor(0.1)
                                         Divider()
                                         Text(side.value)
+                                            .minimumScaleFactor(0.1)
                                     }
+                                    .padding()
                                 }
                                 .frame(minWidth: 75, idealWidth: 100, maxWidth: 150, minHeight: 140)
                                 .background(Color(side.color))

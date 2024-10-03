@@ -18,7 +18,7 @@ let package = Package(
             targets: ["AppModule"],
             bundleIdentifier: "tech.phyotp.multicards",
             teamIdentifier: "P6PV2R9443",
-            displayVersion: "1.0",
+            displayVersion: "1.1.1",
             bundleVersion: "3",
             appIcon: .asset("AppIcon"),
             accentColor: .presetColor(.blue),

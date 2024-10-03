@@ -17,11 +17,14 @@ struct WriteView: View {
     @State private var texts: [String] = []
     @State private var showAlert = false
     @State private var wrongAnswers: [String] = []
-    
+    @State private var count = 0
     var body: some View {
         Group {
             if Set(cards).isSubset(of: Set(know + dontKnow)) {
                 VStack{
+                    Spacer()
+                    DonutChartView(total: prepareCards(questions: questions, answers: answers).count, know: count)
+                    Spacer()
                     Button("Close"){
                         dismiss()
                     }
@@ -35,6 +38,7 @@ struct WriteView: View {
                         dontKnow = []
                         cards = prepareCards(questions: questions, answers: answers)
                         done = []
+                        count = 0
                     }
                     .frame(width: 200)
                     .padding()
@@ -53,7 +57,12 @@ struct WriteView: View {
                         .background(.blue)
                         .foregroundStyle(.white)
                         .cornerRadius(10)
+                        
                     }
+                    Spacer()
+                }
+                .onAppear(){
+                    count += know.count
                 }
             } else {
                 ZStack {

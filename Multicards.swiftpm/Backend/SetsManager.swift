@@ -7,7 +7,7 @@ class SetsManager: ObservableObject {
     
     
     func getSets() {
-        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/test/multicards/sets")!
+        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets")!
         sets = nil
         Task {
             do {
@@ -35,7 +35,7 @@ class SetsManager: ObservableObject {
         }
     }
     func postSet(_ set: CardSet) {
-        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/test/multicards/sets")!
+        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets")!
         Task {
             do {
                 var request = URLRequest(url: apiURL)
