@@ -13,4 +13,5 @@ make sets with multiple dimensions (eg. question, answer, explanation) and make 
 ### V2
 - [ ] templates
 - [ ] ai image to set converter
+- [ ] more gamemodes
 
