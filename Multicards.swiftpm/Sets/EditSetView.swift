@@ -4,7 +4,7 @@ struct EditSetView: View {
     @Binding var set: CardSet
     @Environment(\.dismiss) var dismiss
     @State private var columns: [Column] = [Column(name: "", values: [""]),Column(name: "", values: [""])]
-    var userData: UserData
+    @EnvironmentObject var userData: UserData
     @State private var showAlert = false
     @State private var alertDesc = ""
     @EnvironmentObject var localSetsManager: LocalSetsManager

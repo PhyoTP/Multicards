@@ -16,9 +16,9 @@ let package = Package(
         .iOSApplication(
             name: "Multicards",
             targets: ["AppModule"],
-            bundleIdentifier: "tech.phyotp.multicards",
-            teamIdentifier: "P6PV2R9443",
-            displayVersion: "1.1.1",
+            bundleIdentifier: "dev.phyotp.multicardsapp",
+            teamIdentifier: "YBKKM9K8UR",
+            displayVersion: "1.0",
             bundleVersion: "3",
             appIcon: .asset("AppIcon"),
             accentColor: .presetColor(.blue),

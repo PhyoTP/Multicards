@@ -5,7 +5,7 @@ struct LibraryView: View{
     @EnvironmentObject var localSetsManager: LocalSetsManager
     @EnvironmentObject var setsManager: SetsManager
     @State private var showSheet = false
-    var userData: UserData
+    @EnvironmentObject var userData: UserData
     var body: some View{
         NavigationStack{
             List{
@@ -13,7 +13,7 @@ struct LibraryView: View{
                     NavigationLink(destination: {
                         if let localSetIndex = localSetsManager.localSets.firstIndex(where: { $0.id == localSet.id }) {
                             if localSet.creator == userData.name{
-                                LocalSetView(set: $localSetsManager.localSets[localSetIndex], userData: userData)
+                                LocalSetView(set: $localSetsManager.localSets[localSetIndex])
                                     .environmentObject(localSetsManager)
                             }else{
                                 SetView(setID: localSetsManager.localSets[localSetIndex].id)
@@ -59,7 +59,7 @@ struct LibraryView: View{
             }
         }
         .sheet(isPresented:$showSheet){
-            CreateSetView(userData: userData)
+            CreateSetView()
                 .environmentObject(localSetsManager)
                 .environmentObject(setsManager)
         }

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View{
-    var userData: UserData
+    @EnvironmentObject var userData: UserData
     @State private var showAlert = false
     @EnvironmentObject var userManager: UserManager
     @EnvironmentObject var localSetsManager: LocalSetsManager
@@ -44,11 +44,11 @@ struct SettingsView: View{
             }
         }
         .sheet(isPresented: $login, content: {
-            LoginView(userData: userData)
+            LoginView()
                 .environmentObject(userManager)
         })
         .sheet(isPresented: $register, content: {
-            RegisterView(userData: userData) 
+            RegisterView() 
                 .environmentObject(userManager)
         })
     }

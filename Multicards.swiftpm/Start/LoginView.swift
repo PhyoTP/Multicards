@@ -2,7 +2,7 @@ import SwiftUI
 
 struct LoginView: View{
     @Environment(\.dismiss) var dismiss
-    var userData: UserData
+    @EnvironmentObject var userData: UserData
     @EnvironmentObject var userManager: UserManager
     @State private var errorOccurred = false
     @State private var errorDesc = ""

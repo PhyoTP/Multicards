@@ -7,7 +7,7 @@ class SetsManager: ObservableObject {
     
     
     func getSets() {
-        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets")!
+        let apiURL = URL(string: "https://api.phyotp.dev/multicards/sets")!
         sets = nil
         Task {
             do {
@@ -23,7 +23,7 @@ class SetsManager: ObservableObject {
         }
     }
     func getSet(_ id: UUID) async throws -> CardSet {
-        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/set/" + id.uuidString)!
+        let apiURL = URL(string: "https://api.phyotp.dev/multicards/set/" + id.uuidString)!
         
         do {
             let (data, _) = try await URLSession.shared.data(from: apiURL)
@@ -35,7 +35,7 @@ class SetsManager: ObservableObject {
         }
     }
     func postSet(_ set: CardSet) {
-        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets")!
+        let apiURL = URL(string: "https://api.phyotp.dev/multicards/sets")!
         Task {
             do {
                 var request = URLRequest(url: apiURL)
@@ -111,7 +111,7 @@ class LocalSetsManager: ObservableObject {
         if let token = retrieveToken() {
 //            print(token)
             
-            guard let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/userdata/sets") else {
+            guard let apiURL = URL(string: "https://api.phyotp.dev/phyoid/userdata/sets") else {
                 print("Invalid URL")
                 return
             }
@@ -160,7 +160,7 @@ class LocalSetsManager: ObservableObject {
     
     func updateSets() {
         if let token = retrieveToken(){
-            guard let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/update/sets") else {
+            guard let apiURL = URL(string: "https://api.phyotp.dev/phyoid/update/sets") else {
                 print("Invalid URL")
                 return
             }
@@ -186,7 +186,7 @@ class LocalSetsManager: ObservableObject {
     }
     func updateSet(_ set: CardSet){
         if let token = retrieveToken(){
-            guard let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/update/"+set.id.uuidString) else {
+            guard let apiURL = URL(string: "https://api.phyotp.dev/multicards/sets/update/"+set.id.uuidString) else {
                 print("Invalid URL")
                 return
             }
@@ -213,7 +213,7 @@ class LocalSetsManager: ObservableObject {
     }
     func deleteSet(_ set: CardSet){
         if let token = retrieveToken(){
-            guard let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/multicards/sets/delete/"+set.id.uuidString) else {
+            guard let apiURL = URL(string: "https://api.phyotp.dev/multicards/sets/delete/"+set.id.uuidString) else {
                 print("Invalid URL")
                 return
             }

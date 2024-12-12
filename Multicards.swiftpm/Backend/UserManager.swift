@@ -35,7 +35,7 @@ class UserManager: ObservableObject {
         }
     }
     func login() async throws{
-        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/login")!
+        let apiURL = URL(string: "https://api.phyotp.dev/phyoid/login")!
         
         
         var request = URLRequest(url: apiURL)
@@ -64,7 +64,7 @@ class UserManager: ObservableObject {
         
     }
     func register() async throws{
-        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/register")!
+        let apiURL = URL(string: "https://api.phyotp.dev/phyoid/register")!
         
         
         var request = URLRequest(url: apiURL)
@@ -94,7 +94,7 @@ class UserManager: ObservableObject {
         
     }
     func relogin(){
-        let apiURL = URL(string: "https://phyotp.pythonanywhere.com/api/phyoid/login")!
+        let apiURL = URL(string: "https://api.phyotp.dev/phyoid/login")!
         Task{
             do{
                 var request = URLRequest(url: apiURL)

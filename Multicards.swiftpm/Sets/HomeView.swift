@@ -3,7 +3,7 @@ import SwiftUI
 struct HomeView: View{
     @EnvironmentObject var setsManager: SetsManager
     @EnvironmentObject var localSetsManager: LocalSetsManager
-    var userData: UserData
+    @EnvironmentObject var userData: UserData
     @State private var localSetID = UUID()
     @State private var input = ""
     var filteredSets: [SetCover]{
@@ -25,7 +25,7 @@ struct HomeView: View{
                         NavigationLink(destination: {
                             if set.creator == userData.name {
                                 if let localSetIndex = localSetsManager.localSets.firstIndex(where: { $0.id == set.id }) {
-                                    LocalSetView(set: $localSetsManager.localSets[localSetIndex], userData: userData)
+                                    LocalSetView(set: $localSetsManager.localSets[localSetIndex])
                                         .environmentObject(localSetsManager)
                                         .environmentObject(setsManager)
                                 } else {

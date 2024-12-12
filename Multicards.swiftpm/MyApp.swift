@@ -5,6 +5,10 @@ struct MyApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(UserManager())
+                .environmentObject(LocalSetsManager())
+                .environmentObject(SetsManager())
+                .environmentObject(UserData())
         }
     }
 }

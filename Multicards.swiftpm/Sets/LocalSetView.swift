@@ -4,7 +4,7 @@ struct LocalSetView: View{
     @State private var starred = false
     @Binding var set: CardSet
     @State private var showSheet = false
-    var userData: UserData
+    @EnvironmentObject var userData: UserData
     @EnvironmentObject var localSetsManager: LocalSetsManager
     @EnvironmentObject var setsManager: SetsManager
     var body: some View{
@@ -92,7 +92,7 @@ struct LocalSetView: View{
             .navigationTitle(set.name)
         }
         .sheet(isPresented: $showSheet){
-            EditSetView(set: $set, userData: userData)
+            EditSetView(set: $set)
                 .environmentObject(localSetsManager)
         }
     }

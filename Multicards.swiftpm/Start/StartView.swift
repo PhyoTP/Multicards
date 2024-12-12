@@ -2,7 +2,7 @@ import SwiftUI
 import Shiny
 
 struct StartView: View {
-    var userData: UserData
+    @EnvironmentObject var userData: UserData
     @State private var login = false
     @State private var register = false
     @EnvironmentObject var userManager: UserManager
@@ -37,11 +37,11 @@ struct StartView: View {
             .cornerRadius(10)
         }
         .sheet(isPresented: $login, content: {
-            LoginView(userData: userData)
+            LoginView()
                 .environmentObject(userManager)
         })
         .sheet(isPresented: $register, content: {
-            RegisterView(userData: userData) 
+            RegisterView() 
                 .environmentObject(userManager)
         })
     }

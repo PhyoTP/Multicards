@@ -5,7 +5,7 @@ struct CreateSetView: View {
     @Environment(\.dismiss) var dismiss
     @State private var showSheet = false
     @State private var columns: [Column] = [Column(name: "", values: [""]),Column(name: "", values: [""])]
-    var userData: UserData
+    @EnvironmentObject var userData: UserData
     @State private var showAlert = false
     @State private var alertDesc = ""
     @EnvironmentObject var localSetsManager: LocalSetsManager
@@ -20,10 +20,9 @@ struct CreateSetView: View {
             }
             
             Section(header:Text("Table"), footer:
-                        Button("Import", systemImage: "square.and.arrow.down") {
-                showSheet = true
-                
-            }
+                Button("Import", systemImage: "square.and.arrow.down") {
+                    showSheet = true
+                }
             ) {
                 GridView(columns: $columns)
                 
