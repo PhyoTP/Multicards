@@ -17,7 +17,7 @@ struct SettingsView: View{
                         Button("Log out",role: .destructive){
                             showAlert = true
                         }
-                        
+                        Link("View account",destination: URL(string: "https://auth.phyotp.dev")!)
                     }else{
                         
                         Button("Log in"){
