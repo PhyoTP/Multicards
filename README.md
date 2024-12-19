@@ -8,8 +8,10 @@ make sets with multiple dimensions (eg. question, answer, explanation) and make 
 ### V1
 - [x] the backend flask sqlite database
 - [x] icon
-- [ ] the app
+- [x] the app
+- [x] multicards website
 ### V2
-- [ ] multicards website using angular
 - [ ] templates
+- [ ] ai image to set converter
+- [ ] more gamemodes
 
