@@ -1,10 +1,12 @@
 import SwiftUI
+import Network
 
 struct CardSet: Codable, Identifiable{
     var id = UUID()
     var name: String
     var cards: [Card]
-    var creator: String
+    var creator: String?
+    var formattedCreator: String {creator ?? "Deleted User"}
     var isPublic: Bool
     func keys() -> [String]{
         var tempKey: [String] = []
@@ -70,7 +72,7 @@ struct Side: Identifiable, Hashable{
     var color: UIColor = .systemGray4
     var opacity = 1
 }
-struct Column: Identifiable, Equatable{
+struct Column: Identifiable, Equatable, Hashable{
     var id = UUID()
     var name: String
     var values: [String]
@@ -175,8 +177,11 @@ func prepareCards(questions: [Column], answers: [Column])->[Card]{
     return convertToCards([questionColumn, answerColumn])
 }
  
-struct SetCover: Identifiable, Codable{
+struct SetCover: Identifiable, Codable, Hashable{
     var id: UUID
     var name: String
-    var creator: String
+    var creator: String?
+    var formattedCreator: String {creator ?? "Deleted User"}
+    var cardCount: Int
 }
+

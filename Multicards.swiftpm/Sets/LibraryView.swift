@@ -6,26 +6,19 @@ struct LibraryView: View{
     @EnvironmentObject var setsManager: SetsManager
     @State private var showSheet = false
     @EnvironmentObject var userData: UserData
+    var covers: [SetCover]{
+        if input.isEmpty{
+            return localSetsManager.localSets.map{SetCover(id: $0.id, name: $0.name, creator: $0.creator, cardCount: $0.cards.count)}
+        }else{
+            return localSetsManager.localSets.map{SetCover(id: $0.id, name: $0.name, creator: $0.creator, cardCount: $0.cards.count)}.filter{$0.name.lowercased().contains(input.lowercased())}
+        }
+    }
+    @State private var input = ""
     var body: some View{
         NavigationStack{
             List{
-                ForEach(localSetsManager.localSets){ localSet in
-                    NavigationLink(destination: {
-                        if let localSetIndex = localSetsManager.localSets.firstIndex(where: { $0.id == localSet.id }) {
-                            if localSet.creator == userData.name{
-                                LocalSetView(set: $localSetsManager.localSets[localSetIndex])
-                                    .environmentObject(localSetsManager)
-                            }else{
-                                SetView(setID: localSetsManager.localSets[localSetIndex].id)
-                                    .environmentObject(localSetsManager)
-                                    .environmentObject(setsManager)
-                            }
-                        } else {
-                            Text("Set not found locally")
-                        }
-                    }) {
-                        Text(localSet.name)
-                    }
+                ForEach(covers){ set in
+                    RedirectSetView(set: set)
                 }
                 .onDelete(perform: { indexSet in
                     for i in indexSet{
@@ -38,6 +31,7 @@ struct LibraryView: View{
                     
                 })
             }
+            .searchable(text: $input)
             .navigationTitle("Library")
             .toolbar(){
                 ToolbarItem(placement: .topBarTrailing){

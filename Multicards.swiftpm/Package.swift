@@ -10,7 +10,7 @@ import AppleProductTypes
 let package = Package(
     name: "Multicards",
     platforms: [
-        .iOS("17.5")
+        .iOS("18.1")
     ],
     products: [
         .iOSApplication(
@@ -18,8 +18,8 @@ let package = Package(
             targets: ["AppModule"],
             bundleIdentifier: "dev.phyotp.multicardsapp",
             teamIdentifier: "YBKKM9K8UR",
-            displayVersion: "1.0",
-            bundleVersion: "3",
+            displayVersion: "1.1.1",
+            bundleVersion: "5",
             appIcon: .asset("AppIcon"),
             accentColor: .presetColor(.blue),
             supportedDeviceFamilies: [

@@ -7,7 +7,9 @@ struct SettingsView: View{
     @EnvironmentObject var localSetsManager: LocalSetsManager
     @State private var login = false
     @State private var register = false
+    
     var body: some View{
+        
         NavigationStack{
             Form{
                 Section("phyo id"){

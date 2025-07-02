@@ -2,6 +2,8 @@ import SwiftUI
 
 struct GridView: View{
     @Binding var columns: [Column]
+    @State private var showTranslateSheet = false
+    @State private var selectedIndex: Int?
     var body: some View{
         ScrollView(.horizontal) {
             HStack {
@@ -36,23 +38,27 @@ struct GridView: View{
                         GridRow {
                             TextField("Dimension", text: $column.name)
                                 .fontWeight(.medium)
-                            if columns.firstIndex(where: { $0.id == column.id })! > 1 {
-                                Button {
-                                    if let index = columns.firstIndex(where: { $0.id == column.id }) {
-                                        columns.remove(at: index)
+                            
+                                Menu{
+                                    if columns.count > 2 {
+                                        Button("Delete") {
+                                            if let index = columns.firstIndex(where: { $0.id == column.id }) {
+                                                columns.remove(at: index)
+                                            }
+                                        }
+                                    }
+                                    Button("Translate") {
+                                        if let index = columns.firstIndex(where: { $0.id == column.id }) {
+                                            selectedIndex = index
+                                            print(columns[index])
+                                        }else{
+                                            print("huh")
+                                        }
                                     }
                                 } label: {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundStyle(.red)
+                                    Image(systemName: "ellipsis.circle")
                                 }
-                            }else{
-                                Button{
-                                    
-                                }label:{
-                                    Image(systemName: "minus.circle")
-                                        .foregroundStyle(.clear)
-                                }
-                            }
+                            
                             
                             Rectangle()
                                 .fill(Color(.systemGray3))
@@ -76,6 +82,16 @@ struct GridView: View{
                     }
                 }
                 
+            }
+        }
+        .sheet(isPresented: $showTranslateSheet, onDismiss: {selectedIndex = nil}){
+            if let slindex = selectedIndex{
+                TranslateView(columns: columns, targetColumn: $columns[slindex])
+            }
+        }
+        .onChange(of: selectedIndex){
+            if selectedIndex != nil{
+                showTranslateSheet = true
             }
         }
     }

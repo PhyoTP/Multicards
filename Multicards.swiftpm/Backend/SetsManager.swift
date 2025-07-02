@@ -241,3 +241,37 @@ class LocalSetsManager: ObservableObject {
     }
 }
 
+@Observable class RecentSetManager {
+    var sets: [SetCover] = [] {
+        didSet {
+            save()
+        }
+    }
+    
+    init() {
+        load()
+    }
+    
+    private func getArchiveURL() -> URL {
+        URL.documentsDirectory.appending(path: "recentSets.json")
+    }
+    
+    private func save() {
+        let archiveURL = getArchiveURL()
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.outputFormatting = .prettyPrinted
+        
+        let encodedSets = try? jsonEncoder.encode(sets)
+        try? encodedSets?.write(to: archiveURL, options: .noFileProtection)
+    }
+    
+    private func load() {
+        let archiveURL = getArchiveURL()
+        let jsonDecoder = JSONDecoder()
+        
+        if let retrievedSetData = try? Data(contentsOf: archiveURL),
+           let setsDecoded = try? jsonDecoder.decode([SetCover].self, from: retrievedSetData) {
+            sets = setsDecoded
+        }
+    }
+}

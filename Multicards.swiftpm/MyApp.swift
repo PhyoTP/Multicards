@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct MyApp: App {
+    @State var recentSetManager = RecentSetManager()
     var body: some Scene {
         WindowGroup {
             ContentView()
@@ -9,6 +10,7 @@ struct MyApp: App {
                 .environmentObject(LocalSetsManager())
                 .environmentObject(SetsManager())
                 .environmentObject(UserData())
+                .environment(recentSetManager)
         }
     }
 }

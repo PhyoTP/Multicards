@@ -1,5 +1,10 @@
 import SwiftUI
-
+struct Write: Options{
+    init() {}
+    var caseSensitive = false
+    var ignoreSpaces = true
+    var shuffled = true
+}
 struct WriteView: View {
     @State private var cards: [Card] = []
     var questions: [Column]
@@ -13,21 +18,18 @@ struct WriteView: View {
     @State private var know: [Card] = []
     @State private var dontKnow: [Card] = []
     @State private var done: [Card] = []
-    @Environment(\.dismiss) var dismiss
     @State private var texts: [String] = []
     @State private var showAlert = false
     @State private var wrongAnswers: [String] = []
     @State private var count = 0
+    var options: Write
     var body: some View {
         Group {
-            if Set(cards).isSubset(of: Set(know + dontKnow)) {
+            if Set(cards).isSubset(of: Set(done)) {
                 VStack{
                     Spacer()
                     DonutChartView(total: prepareCards(questions: questions, answers: answers).count, know: count)
                     Spacer()
-                    Button("Close"){
-                        dismiss()
-                    }
                     .frame(width: 200)
                     .padding()
                     .background(.blue)
@@ -66,7 +68,8 @@ struct WriteView: View {
                 }
             } else {
                 ZStack {
-                    ForEach(cards) { card in
+                    //todo: remove zstack
+                    ForEach(cards.reversed()) { card in
                         Form {
                             Section("Questions") {
                                 Text(question.name)
@@ -79,15 +82,21 @@ struct WriteView: View {
                                         TextField("Enter", text: $texts[index])
                                     }
                                 }
-                            }
-                            Section {
-                                Button("Submit") {
+                                Button("Submit"){
                                     var wrongAnswersLocal: [String] = []
                                     for (index, text) in texts.enumerated() {
-                                        let trimmedInput = text.trimmingCharacters(in: .whitespacesAndNewlines)
-                                        let correctAnswer = card.sides[answers[index].name]?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+                                        var input = text
+                                        var correctAnswer = card.sides[answers[index].name] ?? ""
+                                        if options.ignoreSpaces{
+                                            input = input.trimmingCharacters(in: .whitespacesAndNewlines)
+                                            correctAnswer = correctAnswer.trimmingCharacters(in: .whitespacesAndNewlines)
+                                        }
+                                        if !options.caseSensitive{
+                                            input = input.lowercased()
+                                            correctAnswer = correctAnswer.lowercased()
+                                        }
                                         
-                                        if trimmedInput != correctAnswer {
+                                        if input != correctAnswer {
                                             wrongAnswersLocal.append("\(answers[index].name): \(correctAnswer)")
                                         }
                                     }
@@ -124,6 +133,9 @@ struct WriteView: View {
         .onAppear() {
             cards = prepareCards(questions: questions, answers: answers)
             texts = Array(repeating: "", count: answers.count)
+            if options.shuffled{
+                cards.shuffle()
+            }
         }
     }
 }

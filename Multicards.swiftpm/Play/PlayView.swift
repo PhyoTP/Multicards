@@ -1,123 +1,157 @@
 import SwiftUI
-
+enum Gamemode: String{
+    case Flashcards, Match, Write
+}
+protocol Options{ init() }
+func bindOption<T: Options>(options: Binding<Options?>, as type: T.Type) -> Binding<T> {
+    return Binding<T>(
+        get: {
+            (options.wrappedValue as? T) ?? T.init()
+        },
+        set: { newValue in
+            options.wrappedValue = newValue
+        }
+    )
+}
 struct PlayView: View {
     var set: CardSet
     @State private var questionSelected: [Column] = []
     @State private var answerSelected: [Column] = []
-    @State private var showAlert = false
-    @State private var alertDesc = ""
-    @State private var flashcards = false
-    @State private var match = false
-    @State private var write = false
+    @State private var gamemode: Gamemode?
+    @State private var options: (any Options)?
     var body: some View {
         NavigationStack{
             Form {
-                Section {
-                    Menu("Question cards") {
-                        ForEach(set.convertToColumns()){column in
-                            if questionSelected.contains(where: {$0.name == column.name}){
-                                
-                                Button{
+                Section("Sides"){
+                    ZStack{
+                        HStack{
+                            Text("")
+                            Spacer()
+                            Text("Question")
+                                .bold()
+                            Spacer()
+                        }
+                        HStack{
+                            Spacer()
+                            Text("Answer")
+                                .bold()
+                        }
+                    }
+                    List(set.convertToColumns()){column in
+                        ZStack{
+                            HStack{
+                                Spacer()
+                                if questionSelected.contains(where: {$0.name == column.name}){
                                     
-                                    questionSelected.removeAll(where: {$0.name == column.name})
+                                    Button{
+                                        
+                                        questionSelected.removeAll(where: {$0.name == column.name})
+                                        
+                                        
+                                    }label: {
+                                        Image(systemName: "checkmark.circle.fill")
+                                    }
+                                    .buttonStyle(.plain)
                                     
-                                    
-                                }label: {
-                                    Text(column.name)
-                                    Image(systemName: "checkmark")
+                                }else{
+                                    Button{
+                                        questionSelected.append(column)
+                                        
+                                    }label:{
+                                        Image(systemName: "circle")
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                
-                                
-                            }else{
-                                Button(column.name){
-                                    questionSelected.append(column)
+                                Spacer()
+                            }
+                            HStack{
+                                Text(column.name)
+                                Spacer()
+                                if answerSelected.contains(where: {$0.name == column.name}){
                                     
+                                    Button{
+                                        
+                                        answerSelected.removeAll(where: {$0.name == column.name})
+                                        
+                                        
+                                    }label: {
+                                        Image(systemName: "checkmark.circle.fill")
+                                    }
+                                    .buttonStyle(.plain)
+                                    
+                                }else{
+                                    Button{
+                                        answerSelected.append(column)
+                                        
+                                    }label:{
+                                        Image(systemName: "circle")
+                                    }
+                                    .buttonStyle(.plain)
                                 }
                             }
                         }
                     }
-                    ForEach(questionSelected){column in
-                        Text(column.name) 
-                    }
-                    Menu("Answer cards") {
-                        ForEach(set.convertToColumns()){column in
-                            if answerSelected.contains(where: {$0.name == column.name}){
-                                
-                                Button{
-                                    
-                                    answerSelected.removeAll(where: {$0.name == column.name})
-                                    
-                                    
-                                }label: {
-                                    Text(column.name)
-                                    Image(systemName: "checkmark")
-                                }
-                                
-                                
-                            }else{
-                                Button(column.name){
-                                    answerSelected.append(column)
-                                    
-                                }
-                            }
-                        }
-                    }
-                    ForEach(answerSelected){column in
-                        Text(column.name) 
-                    }
+                    
+                    
+                    
+                    
+                    
+                    
                 }
                 
-                
-                
-                
-                Section("Mode") {
-                    Button{
-                        if questionSelected.isEmpty || answerSelected.isEmpty{
-                            showAlert = true
-                            alertDesc = "Card sides cannot be empty"
-                        }else{
-                            flashcards = true
+                Section("Mode"){
+                    
+                    Menu(gamemode?.rawValue ?? "Select a mode") {
+                        Button{
+                            gamemode = .Flashcards
+                            options = Flashcards()
+                        }label:{
+                            Label("Flashcards", systemImage: "rectangle.stack")
                         }
-                    }label: {
-                        Label("Flashcards", systemImage: "rectangle.stack")
+                        .disabled(questionSelected.isEmpty || answerSelected.isEmpty)
+                        Button{
+                            gamemode = .Match
+                            options = Match()
+                        }label:{
+                            Label("Match", systemImage: "rectangle.grid.3x2")
+                        }
+                        .disabled(questionSelected.isEmpty || answerSelected.isEmpty)
+                        Button{
+                            gamemode = .Write
+                            options = Write()
+                        }label:{
+                            Label("Write", systemImage: "rectangle.and.pencil.and.ellipsis")
+                        }
+                        .disabled(questionSelected.isEmpty || answerSelected.isEmpty)
+                        
                     }
                     
-                    Button{
-                        if questionSelected.isEmpty || answerSelected.isEmpty{
-                            showAlert = true
-                            alertDesc = "Card sides cannot be empty"
-                        }else{
-                            match = true
-                        }
-                    }label: {
-                        Label("Match", systemImage: "rectangle.grid.3x2")
+                    if let _ = options as? Flashcards {
+                        Toggle("Shuffled?", isOn: bindOption(options: $options, as: Flashcards.self).shuffled)
+                    }else if let _ = options as? Write {
+                        Toggle("Shuffled?", isOn: bindOption(options: $options, as: Write.self).shuffled)
+                        Toggle("Case-sensitive?", isOn: bindOption(options: $options, as: Write.self).caseSensitive)
+                        Toggle("Ignore spaces?", isOn: bindOption(options: $options, as: Write.self).ignoreSpaces)
                     }
-                    
-                    Button{
-                        if questionSelected.isEmpty || answerSelected.isEmpty{
-                            showAlert = true
-                            alertDesc = "Card sides cannot be empty"
-                        }else{
-                            write = true
+                }
+                Section{
+                    if let selectedGamemode = gamemode{
+                        NavigationLink{
+                            switch selectedGamemode {
+                            case .Flashcards:
+                                FlashcardsView(questions: questionSelected, answers: answerSelected, options: options as? Flashcards ?? Flashcards())
+                            case .Match:
+                                MatchView(questions: questionSelected, answers: answerSelected, options: options as? Match ?? Match())
+                            case .Write:
+                                WriteView(questions: questionSelected, answers: answerSelected, options: options as? Write ?? Write())
+                            }
+                        }label: {
+                            Label("Play", systemImage: "play.fill")
                         }
-                    }label: {
-                        Label("Write", systemImage: "rectangle.and.pencil.and.ellipsis")
                     }
                 }
             }
             .navigationTitle("Play")
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("Error"), message: Text(alertDesc), dismissButton: .default(Text("OK")))
-            }
-            .sheet(isPresented: $flashcards) {
-                FlashcardsView(questions: questionSelected, answers: answerSelected)
-            }
-            .sheet(isPresented: $match) {
-                MatchView(questions: questionSelected, answers: answerSelected)
-            }
-            .sheet(isPresented: $write) {
-                WriteView(questions: questionSelected, answers: answerSelected)
-            }
         }
     }
 }

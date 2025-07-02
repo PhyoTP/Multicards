@@ -11,7 +11,7 @@ struct SetView: View {
             NavigationStack {
                 Form {
                     Section("info"){
-                        Text("Made by "+set.creator)
+                        Text("Made by "+set.formattedCreator)
                     }
                     Section("Table"){
                         ScrollView(.horizontal){

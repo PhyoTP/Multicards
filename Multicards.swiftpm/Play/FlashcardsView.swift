@@ -1,5 +1,8 @@
 import SwiftUI
-
+struct Flashcards: Options{
+    init() {}
+    var shuffled = true
+}
 struct FlashcardsView: View {
     @State private var cards: [Card] = []
     var questions: [Column]
@@ -16,26 +19,20 @@ struct FlashcardsView: View {
     @State private var dontKnow: [Card] = []
     @State private var last: [Bool] = []
     @State private var count = 0
-    @Environment(\.dismiss) var dismiss
+    var options: Flashcards
     var body: some View {
-        Group{
+        VStack{
             if Set(cards).isSubset(of: Set(know + dontKnow)){
-                VStack{
                     Spacer()
                     DonutChartView(total: prepareCards(questions: questions, answers: answers).count, know: count)
                     Spacer()
-                    Button("Close"){
-                        dismiss()
-                    }
-                    .frame(width: 200)
-                    .padding()
-                    .background(.blue)
-                    .foregroundStyle(.white)
-                    .cornerRadius(10)
                     Button("Try again"){
                         know = []
                         dontKnow = []
                         cards = prepareCards(questions: questions, answers: answers)
+                        if options.shuffled{
+                            cards.shuffle()
+                        }
                         last = []
                         count = 0
                     }
@@ -47,6 +44,9 @@ struct FlashcardsView: View {
                     if !dontKnow.isEmpty{
                         Button("Try again with unknown"){
                             cards = dontKnow
+                            if options.shuffled{
+                                cards.shuffle()
+                            }
                             know = []
                             dontKnow = []
                             last = []
@@ -58,15 +58,16 @@ struct FlashcardsView: View {
                         .cornerRadius(10)
                     }
                     Spacer()
-                }
+                
                 .onAppear(){
                     count += know.count
                 }
             }else{
-                VStack{
+                
                     HStack{
                         Spacer()
                         Image(systemName: "arrow.left")
+                        Text(String(know.count))
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundStyle(.green)
                             .font(.system(size: 30))
@@ -74,11 +75,12 @@ struct FlashcardsView: View {
                         Image(systemName: "multiply.circle.fill")
                             .foregroundStyle(.red)
                             .font(.system(size: 30))
+                        Text(String(dontKnow.count))
                         Image(systemName: "arrow.right")
                         Spacer()
                     }
                     ZStack {
-                        ForEach(cards) { card in
+                        ForEach(cards.reversed()) { card in
                             VStack {
                                 if tapped{
                                     Text(answer.name)
@@ -101,8 +103,12 @@ struct FlashcardsView: View {
                             }
                             .gesture(
                                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                                
                                     .onEnded({value in
+                                        
+                                        
                                         if value.translation.width < 0{
+                                            
                                             withAnimation(){
                                                 if tapped{
                                                     dontKnow.append(card)
@@ -130,6 +136,7 @@ struct FlashcardsView: View {
                                             tapped = false
                                             rotation = 0
                                         }
+                                        
                                     })
                             )
                             .highPriorityGesture(
@@ -175,11 +182,14 @@ struct FlashcardsView: View {
                         }
                         
                     }
-                }
+                
             }
         }
         .onAppear(){
             cards = prepareCards(questions: questions, answers: answers)
+            if options.shuffled{
+                cards.shuffle()
+            }
         }
     }
 }

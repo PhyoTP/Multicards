@@ -1,5 +1,8 @@
 import SwiftUI
-
+struct Match: Options{
+    init() {}
+    var refill = false
+}
 struct MatchView: View {
     @State private var cards: [Card] = []
     var questions: [Column]
@@ -12,6 +15,7 @@ struct MatchView: View {
     @State private var count = 0
     @State private var best: TimeInterval = 0
     @State private var done = false
+    var options: Match
     var body: some View {
         if done{
             VStack{
