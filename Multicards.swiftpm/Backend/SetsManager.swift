@@ -3,10 +3,11 @@ import SwiftUI
 
 class SetsManager: ObservableObject {
     @Published var sets: [SetCover]?
-    
+    @Published var errorDesc: String = "a"
     
     
     func getSets() {
+        errorDesc = "a"
         let apiURL = URL(string: "https://api.phyotp.dev/multicards/sets")!
         sets = nil
         Task {
@@ -16,9 +17,13 @@ class SetsManager: ObservableObject {
                 
                 try await MainActor.run {
                     self.sets = try JSONDecoder().decode([SetCover].self, from: data)
+                    self.errorDesc = "No error"
                 }
             } catch {
                 print("Failed to fetch sets: \(error.localizedDescription)")
+                await MainActor.run {
+                    self.errorDesc = error.localizedDescription
+                }
             }
         }
     }
