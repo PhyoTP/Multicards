@@ -49,7 +49,7 @@ struct PlayView: View {
                                         
                                         
                                     }label: {
-                                        Image(systemName: "checkmark.circle.fill")
+                                        Image(systemName: "checkmark.square.fill")
                                     }
                                     .buttonStyle(.plain)
                                     
@@ -58,7 +58,7 @@ struct PlayView: View {
                                         questionSelected.append(column)
                                         
                                     }label:{
-                                        Image(systemName: "circle")
+                                        Image(systemName: "square")
                                     }
                                     .buttonStyle(.plain)
                                 }
@@ -75,7 +75,7 @@ struct PlayView: View {
                                         
                                         
                                     }label: {
-                                        Image(systemName: "checkmark.circle.fill")
+                                        Image(systemName: "checkmark.square.fill")
                                     }
                                     .buttonStyle(.plain)
                                     
@@ -84,7 +84,7 @@ struct PlayView: View {
                                         answerSelected.append(column)
                                         
                                     }label:{
-                                        Image(systemName: "circle")
+                                        Image(systemName: "square")
                                     }
                                     .buttonStyle(.plain)
                                 }
@@ -139,11 +139,14 @@ struct PlayView: View {
                         NavigationLink{
                             switch selectedGamemode {
                             case .Flashcards:
-                                FlashcardsView(questions: questionSelected, answers: answerSelected, options: options as? Flashcards ?? Flashcards())
+                                FlashcardsView(fullCards: set.cards, questions: questionSelected.map{$0.name}, answers: answerSelected.map{$0.name}, options: options as? Flashcards ?? Flashcards())
+                                    
                             case .Match:
                                 MatchView(questions: questionSelected, answers: answerSelected, options: options as? Match ?? Match())
+                                    
                             case .Write:
                                 WriteView(questions: questionSelected, answers: answerSelected, options: options as? Write ?? Write())
+                                    
                             }
                         }label: {
                             Label("Play", systemImage: "play.fill")

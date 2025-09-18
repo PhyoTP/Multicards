@@ -4,15 +4,10 @@ struct Flashcards: Options{
     var shuffled = true
 }
 struct FlashcardsView: View {
+    var fullCards: [Card]
     @State private var cards: [Card] = []
-    var questions: [Column]
-    var answers: [Column]
-    var question: Column {
-        combineColumns(questions)
-    }
-    var answer: Column {
-        combineColumns(answers)
-    }
+    var questions: [String]
+    var answers: [String]
     @State private var tapped = false
     @State private var rotation = 0.0
     @State private var know: [Card] = []
@@ -21,49 +16,58 @@ struct FlashcardsView: View {
     @State private var count = 0
     var options: Flashcards
     var body: some View {
-        VStack{
+        GeometryReader{geometry in
+        
             if Set(cards).isSubset(of: Set(know + dontKnow)){
+                HStack{
                     Spacer()
-                    DonutChartView(total: prepareCards(questions: questions, answers: answers).count, know: count)
-                    Spacer()
-                    Button("Try again"){
-                        know = []
-                        dontKnow = []
-                        cards = prepareCards(questions: questions, answers: answers)
-                        if options.shuffled{
-                            cards.shuffle()
-                        }
-                        last = []
-                        count = 0
-                    }
-                    .frame(width: 200)
-                    .padding()
-                    .background(.blue)
-                    .foregroundStyle(.white)
-                    .cornerRadius(10)
-                    if !dontKnow.isEmpty{
-                        Button("Try again with unknown"){
-                            cards = dontKnow
+                    VStack{
+                        Spacer()
+                        DonutChartView(total: fullCards.count, know: count)
+                        Spacer()
+                        Button("Try again"){
+                            know = []
+                            dontKnow = []
+                            cards = fullCards
                             if options.shuffled{
                                 cards.shuffle()
                             }
-                            know = []
-                            dontKnow = []
                             last = []
+                            count = 0
                         }
                         .frame(width: 200)
                         .padding()
                         .background(.blue)
                         .foregroundStyle(.white)
                         .cornerRadius(10)
+                        if !dontKnow.isEmpty{
+                            Button("Try again with unknown"){
+                                cards = dontKnow
+                                if options.shuffled{
+                                    cards.shuffle()
+                                }
+                                know = []
+                                dontKnow = []
+                                last = []
+                            }
+                            .frame(width: 200)
+                            .padding()
+                            .background(.blue)
+                            .foregroundStyle(.white)
+                            .cornerRadius(10)
+                        }
+                        Spacer()
+                        
+                            .onAppear(){
+                                count += know.count
+                            }
                     }
                     Spacer()
-                
-                .onAppear(){
-                    count += know.count
                 }
             }else{
-                
+                VStack{
+                    Text(String(cards.count-know.count-dontKnow.count)+" left")
+                    Spacer()
                     HStack{
                         Spacer()
                         Image(systemName: "arrow.left")
@@ -81,19 +85,44 @@ struct FlashcardsView: View {
                     }
                     ZStack {
                         ForEach(cards.reversed()) { card in
-                            VStack {
+                            VStack{
                                 if tapped{
-                                    Text(answer.name)
-                                        .scaleEffect(x: -1, y: 1)
-                                        .fontWeight(.medium)
-                                    Divider()
-                                    Text(card.sides[answer.name] ?? "")
-                                        .scaleEffect(x: -1, y: 1)
+                                    ForEach(answers, id: \.self){ans in
+                                        VStack{
+                                            Text(ans)
+                                                .fontWeight(.medium)
+                                                .scaleEffect(x: -1, y: 1)
+                                                .minimumScaleFactor(0.2)
+                                                .multilineTextAlignment(.center)
+                                                .foregroundStyle(.blue)
+                                            Text(card.sides[ans] ?? "")
+                                                .scaleEffect(x: -1, y: 1)
+                                                .minimumScaleFactor(0.2)
+                                                .multilineTextAlignment(.center)
+                                        }
+                                        .padding()
+                                        if answers.last != ans{
+                                            Divider()
+                                        }
+                                    }
+                                    
                                 }else{
-                                    Text(question.name)
-                                        .fontWeight(.medium)
-                                    Divider()
-                                    Text(card.sides[question.name] ?? "")
+                                    ForEach(questions, id: \.self){que in
+                                        VStack{
+                                            Text(que)
+                                                .fontWeight(.medium)
+                                                .minimumScaleFactor(0.2)
+                                                .multilineTextAlignment(.center)
+                                                .foregroundStyle(.blue)
+                                            Text(card.sides[que] ?? "")
+                                                .minimumScaleFactor(0.2)
+                                                .multilineTextAlignment(.center)
+                                        }
+                                        .padding()
+                                        if questions.last != que{
+                                            Divider()
+                                        }
+                                    }
                                 }
                             }
                             .frame(width: 200, height: 400)
@@ -154,13 +183,13 @@ struct FlashcardsView: View {
                             .offset(x: 
                                         know.contains(where: {$0.id==card.id}) ? 
                                     tapped ?
-                                    -500 :
-                                        -500 
+                                    -geometry.size.width :
+                                        -geometry.size.width 
                                     : 
                                         dontKnow.contains(where: {$0.id==card.id}) ?
                                     tapped ? 
-                                    500 : 
-                                        500 
+                                    geometry.size.width : 
+                                        geometry.size.width 
                                     :
                                         0
                                     
@@ -180,13 +209,13 @@ struct FlashcardsView: View {
                                 print(last)
                             }
                         }
-                        
                     }
-                
+                    Spacer()
+                }
             }
         }
         .onAppear(){
-            cards = prepareCards(questions: questions, answers: answers)
+            cards = fullCards
             if options.shuffled{
                 cards.shuffle()
             }

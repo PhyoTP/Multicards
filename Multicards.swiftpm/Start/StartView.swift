@@ -9,7 +9,7 @@ struct StartView: View {
     var body: some View {
         VStack {
             Text("Welcome to Multicards")
-                .font(.system(size: 34, weight: .bold, design: .rounded))
+                .font(.custom("AvenirNext-bold", size: 34))
                 .shiny()
             Button("Log in to PhyoID") {
                 login = true

@@ -16,40 +16,42 @@ struct LibraryView: View{
     @State private var input = ""
     var body: some View{
         NavigationStack{
-            List{
-                ForEach(covers){ set in
-                    RedirectSetView(set: set)
+            Section(""){
+                List{
+                    ForEach(covers){ set in
+                        RedirectSetView(set: set)
+                    }
+                    .onDelete(perform: { indexSet in
+                        for i in indexSet{
+                            if localSetsManager.localSets[i].isPublic{
+                                localSetsManager.deleteSet(localSetsManager.localSets[i])
+                            }
+                        }
+                        localSetsManager.localSets.remove(atOffsets: indexSet)
+                        localSetsManager.updateSets()
+                        
+                    })
                 }
-                .onDelete(perform: { indexSet in
-                    for i in indexSet{
-                        if localSetsManager.localSets[i].isPublic{
-                            localSetsManager.deleteSet(localSetsManager.localSets[i])
+                .searchable(text: $input)
+                .navigationTitle("Library")
+                .toolbar(){
+                    ToolbarItem(placement: .topBarTrailing){
+                        EditButton()
+                    }
+                    ToolbarItem(placement: .topBarTrailing){
+                        Button{
+                            showSheet = true
+                        }label:{
+                            Image(systemName: "plus")
                         }
                     }
-                    localSetsManager.localSets.remove(atOffsets: indexSet)
-                    localSetsManager.updateSets()
-                    
-                })
-            }
-            .searchable(text: $input)
-            .navigationTitle("Library")
-            .toolbar(){
-                ToolbarItem(placement: .topBarTrailing){
-                    EditButton()
                 }
-                ToolbarItem(placement: .topBarTrailing){
-                    Button{
-                        showSheet = true
-                    }label:{
-                        Image(systemName: "plus")
-                    }
+                .refreshable {
+                    load()
                 }
-            }
-            .refreshable {
-                load()
-            }
-            .onAppear(){
-                load()
+                .onAppear(){
+                    load()
+                }
             }
         }
         .sheet(isPresented:$showSheet){

@@ -4,6 +4,7 @@ struct Write: Options{
     var caseSensitive = false
     var ignoreSpaces = true
     var shuffled = true
+    var corrections = false
 }
 struct WriteView: View {
     @State private var cards: [Card] = []
@@ -30,11 +31,7 @@ struct WriteView: View {
                     Spacer()
                     DonutChartView(total: prepareCards(questions: questions, answers: answers).count, know: count)
                     Spacer()
-                    .frame(width: 200)
-                    .padding()
-                    .background(.blue)
-                    .foregroundStyle(.white)
-                    .cornerRadius(10)
+                    
                     Button("Try again"){
                         know = []
                         dontKnow = []
@@ -53,6 +50,7 @@ struct WriteView: View {
                             know = []
                             dontKnow = []
                             done = []
+                            print(dontKnow)
                         }
                         .frame(width: 200)
                         .padding()
@@ -67,6 +65,7 @@ struct WriteView: View {
                     count += know.count
                 }
             } else {
+                Text(String(done.count)+"/"+String(cards.count))
                 ZStack {
                     //todo: remove zstack
                     ForEach(cards.reversed()) { card in
