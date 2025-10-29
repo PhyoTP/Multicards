@@ -115,15 +115,26 @@ struct RedirectSetView: View{
                     }
             }
         }) {
-            VStack(alignment: .leading){
-                Text(set.name)
-                HStack{
-                    Text("By "+set.formattedCreator)
-                        .font(.caption)
-                    Spacer()
-                    Text(String(set.cardCount)+" terms")
-                        .font(.caption)
-                    Spacer()
+            HStack{
+                VStack(alignment: .leading){
+                    Text(set.name)
+                    HStack{
+                        Text("By "+set.formattedCreator)
+                            .font(.caption)
+                        Spacer()
+                        Text(String(set.cardCount)+" terms")
+                            .font(.caption)
+                        Spacer()
+                    }
+                }
+                if set.creator == userData.name{
+                    Image(systemName: "person.circle.fill")
+                        .padding()
+                        .foregroundStyle(accent)
+                }else if (localSetsManager.localSets.map{$0.id}.contains(set.id)){
+                    Image(systemName: "star.fill")
+                        .padding()
+                        .foregroundStyle(accent)
                 }
             }
         }

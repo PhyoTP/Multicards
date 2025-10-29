@@ -29,7 +29,7 @@ struct WriteView: View {
             if Set(cards).isSubset(of: Set(done)) {
                 VStack{
                     Spacer()
-                    DonutChartView(total: prepareCards(questions: questions, answers: answers).count, know: count)
+                    //DonutChartView(total: prepareCards(questions: questions, answers: answers).count, know: count)
                     Spacer()
                     
                     Button("Try again"){
@@ -41,8 +41,8 @@ struct WriteView: View {
                     }
                     .frame(width: 200)
                     .padding()
-                    .background(.blue)
-                    .foregroundStyle(.white)
+                    .background(accent)
+                    .foregroundStyle(.black)
                     .cornerRadius(10)
                     if !dontKnow.isEmpty{
                         Button("Try again with unknown"){
@@ -54,8 +54,8 @@ struct WriteView: View {
                         }
                         .frame(width: 200)
                         .padding()
-                        .background(.blue)
-                        .foregroundStyle(.white)
+                        .background(accent)
+                        .foregroundStyle(.black)
                         .cornerRadius(10)
                         
                     }

@@ -16,24 +16,24 @@ struct StartView: View {
             }
             .frame(width: 200)
             .padding()
-            .background(.blue)
-            .foregroundStyle(.white)
+            .background(accent)
+            .foregroundStyle(.black)
             .cornerRadius(10)
             Button("Register for a PhyoID") {
                 register = true
             }
             .frame(width: 200)
             .padding()
-            .background(.blue)
-            .foregroundStyle(.white)
+            .background(accent)
+            .foregroundStyle(.black)
             .cornerRadius(10)
             Button("Join as a Guest") {
                 userData.done = true
             }
             .frame(width: 200)
             .padding()
-            .background(.blue)
-            .foregroundStyle(.white)
+            .background(accent)
+            .foregroundStyle(.black)
             .cornerRadius(10)
         }
         .sheet(isPresented: $login, content: {

@@ -23,7 +23,7 @@ struct FlashcardsView: View {
                     Spacer()
                     VStack{
                         Spacer()
-                        DonutChartView(total: fullCards.count, know: count)
+                        DonutChartView(total: Double(fullCards.count), know: Double(count))
                         Spacer()
                         Button("Try again"){
                             know = []
@@ -37,8 +37,8 @@ struct FlashcardsView: View {
                         }
                         .frame(width: 200)
                         .padding()
-                        .background(.blue)
-                        .foregroundStyle(.white)
+                        .background(accent)
+                        .foregroundStyle(.black)
                         .cornerRadius(10)
                         if !dontKnow.isEmpty{
                             Button("Try again with unknown"){
@@ -52,8 +52,8 @@ struct FlashcardsView: View {
                             }
                             .frame(width: 200)
                             .padding()
-                            .background(.blue)
-                            .foregroundStyle(.white)
+                            .background(accent)
+                            .foregroundStyle(.black)
                             .cornerRadius(10)
                         }
                         Spacer()
@@ -65,8 +65,7 @@ struct FlashcardsView: View {
                     Spacer()
                 }
             }else{
-                VStack{
-                    Text(String(cards.count-know.count-dontKnow.count)+" left")
+                NavigationStack{
                     Spacer()
                     HStack{
                         Spacer()
@@ -83,6 +82,7 @@ struct FlashcardsView: View {
                         Image(systemName: "arrow.right")
                         Spacer()
                     }
+                    .navigationTitle(String(cards.count-know.count-dontKnow.count)+" left")
                     ZStack {
                         ForEach(cards.reversed()) { card in
                             VStack{
@@ -94,7 +94,7 @@ struct FlashcardsView: View {
                                                 .scaleEffect(x: -1, y: 1)
                                                 .minimumScaleFactor(0.2)
                                                 .multilineTextAlignment(.center)
-                                                .foregroundStyle(.blue)
+                                                .foregroundStyle(accent)
                                             Text(card.sides[ans] ?? "")
                                                 .scaleEffect(x: -1, y: 1)
                                                 .minimumScaleFactor(0.2)
@@ -113,7 +113,7 @@ struct FlashcardsView: View {
                                                 .fontWeight(.medium)
                                                 .minimumScaleFactor(0.2)
                                                 .multilineTextAlignment(.center)
-                                                .foregroundStyle(.blue)
+                                                .foregroundStyle(accent)
                                             Text(card.sides[que] ?? "")
                                                 .minimumScaleFactor(0.2)
                                                 .multilineTextAlignment(.center)

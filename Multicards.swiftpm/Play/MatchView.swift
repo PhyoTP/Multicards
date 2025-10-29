@@ -19,22 +19,22 @@ struct MatchView: View {
     var body: some View {
         if done{
             VStack{
-                Text(String(format: "%.1f",elapsedTime))
-                Text("Best: "+String(format: "%.1f",best))
+                Spacer()
+                DonutChartView(total: elapsedTime, know: best, decimal: true)
+                Spacer()
                 Button("Try again"){
                     resetGame()
                     start()
                 }
                 .frame(width: 200)
                 .padding()
-                .background(.blue)
-                .foregroundStyle(.white)
+                .background(accent)
+                .foregroundStyle(.black)
                 .cornerRadius(10)
+                Spacer()
             }
         }else{
-            VStack{
-                Text(String(format: "%.1f",elapsedTime))
-                    .fontWeight(.medium)
+            NavigationStack{
                 Grid {
                     ForEach($cardGrid, id: \.self) { $row in
                         GridRow {
@@ -112,6 +112,7 @@ struct MatchView: View {
                         }
                     }
                 }
+                .navigationTitle(String(format: "%.1f",elapsedTime))
                 .onAppear{
                     start()
                 }

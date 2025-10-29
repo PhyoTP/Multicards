@@ -1,5 +1,5 @@
 import SwiftUI
-
+let accent: Color = Color(red: 228/255, green: 148/255, blue: 27/255)
 @main
 struct MyApp: App {
     @State var recentSetManager = RecentSetManager()
@@ -11,6 +11,7 @@ struct MyApp: App {
                 .environmentObject(SetsManager())
                 .environmentObject(UserData())
                 .environment(recentSetManager)
+                .tint(accent)
         }
     }
 }

@@ -38,7 +38,9 @@ struct ContentView: View {
                     selection = 2
                 }
             } else {
+                Spacer()
                 StartView()
+                Spacer()
             }
         }
     }
@@ -57,7 +59,8 @@ struct CheckOfflineView: View{
                         .multilineTextAlignment(.center)
                     Spacer()
                 }
-                .background(.blue)
+                .background(accent)
+                .foregroundStyle(.black)
                 .onAppear(){
                     setsManager.getSets()
                 }
@@ -65,13 +68,21 @@ struct CheckOfflineView: View{
                 EmptyView()
             }else{
                 HStack{
-                    Button{
-                        setsManager.getSets()
+                    Menu{
+                        Button{
+                            setsManager.getSets()
+                        }label: {
+                            Label("Retry", systemImage: "arrow.counterclockwise")
+                        }
+                        Link(destination: URL(string: "https://stats.uptimerobot.com/rX1n6yYoIp/799271942")!){
+                            Label("Check uptime", systemImage: "cellularbars")
+                        }
                     }label: {
-                        Image(systemName: "arrow.counterclockwise")
+                        Image(systemName: "ellipsis.circle")
                             .padding()
                             .foregroundStyle(.white)
                     }
+                    
                     Spacer()
                     Text(setsManager.errorDesc)
                         .fontWeight(.medium)

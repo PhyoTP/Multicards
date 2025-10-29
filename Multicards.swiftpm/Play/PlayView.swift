@@ -49,7 +49,12 @@ struct PlayView: View {
                                         
                                         
                                     }label: {
-                                        Image(systemName: "checkmark.square.fill")
+                                        ZStack{
+                                            Image(systemName: "square.fill")
+                                            Image(systemName: "checkmark.square.fill")
+                                                .foregroundStyle(accent)
+                                            Image(systemName: "square")
+                                        }
                                     }
                                     .buttonStyle(.plain)
                                     
@@ -75,7 +80,12 @@ struct PlayView: View {
                                         
                                         
                                     }label: {
-                                        Image(systemName: "checkmark.square.fill")
+                                        ZStack{
+                                            Image(systemName: "square.fill")
+                                            Image(systemName: "checkmark.square.fill")
+                                                .foregroundStyle(accent)
+                                            Image(systemName: "square")
+                                        }
                                     }
                                     .buttonStyle(.plain)
                                     
@@ -101,6 +111,7 @@ struct PlayView: View {
                 
                 Section("Mode"){
                     
+                    
                     Menu(gamemode?.rawValue ?? "Select a mode") {
                         Button{
                             gamemode = .Flashcards
@@ -118,7 +129,7 @@ struct PlayView: View {
                         .disabled(questionSelected.isEmpty || answerSelected.isEmpty)
                         Button{
                             gamemode = .Write
-                            options = Write()
+                            options = NewWrite()
                         }label:{
                             Label("Write", systemImage: "rectangle.and.pencil.and.ellipsis")
                         }
@@ -128,10 +139,10 @@ struct PlayView: View {
                     
                     if let _ = options as? Flashcards {
                         Toggle("Shuffled?", isOn: bindOption(options: $options, as: Flashcards.self).shuffled)
-                    }else if let _ = options as? Write {
-                        Toggle("Shuffled?", isOn: bindOption(options: $options, as: Write.self).shuffled)
-                        Toggle("Case-sensitive?", isOn: bindOption(options: $options, as: Write.self).caseSensitive)
-                        Toggle("Ignore spaces?", isOn: bindOption(options: $options, as: Write.self).ignoreSpaces)
+                    }else if let _ = options as? NewWrite {
+                        Toggle("Shuffled?", isOn: bindOption(options: $options, as: NewWrite.self).shuffled)
+                        Toggle("Case-sensitive?", isOn: bindOption(options: $options, as: NewWrite.self).caseSensitive)
+                        Toggle("Ignore spaces?", isOn: bindOption(options: $options, as: NewWrite.self).ignoreSpaces)
                     }
                 }
                 Section{
@@ -145,7 +156,7 @@ struct PlayView: View {
                                 MatchView(questions: questionSelected, answers: answerSelected, options: options as? Match ?? Match())
                                     
                             case .Write:
-                                WriteView(questions: questionSelected, answers: answerSelected, options: options as? Write ?? Write())
+                                NewWriteView(fullCards: set.cards, questions: questionSelected.map{$0.name}, answers: answerSelected.map{$0.name}, options: options as? NewWrite ?? NewWrite())
                                     
                             }
                         }label: {
