@@ -66,6 +66,7 @@ struct TranslateView: View {
                     dismiss()
                 }
             }
+            .unifiedBackground()
             if isConverting{
                 ProgressView(value: doneCount, total: Double(targetColumn.values.count))
             }

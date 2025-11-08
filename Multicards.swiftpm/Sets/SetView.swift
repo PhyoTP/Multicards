@@ -13,6 +13,7 @@ struct SetView: View {
                     Section("info"){
                         Text("Made by "+set.formattedCreator)
                     }
+                    .listRowBackground(accent.opacity(0.2))
                     Section("Table"){
                         ScrollView(.horizontal){
                             Grid {
@@ -48,6 +49,7 @@ struct SetView: View {
                             .padding()
                         }
                     }
+                    .listRowBackground(accent.opacity(0.2))
                 }
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
@@ -92,6 +94,7 @@ struct SetView: View {
                         starred = true
                     }
                 }
+                .unifiedBackground()
             }
         }else{
             ProgressView()

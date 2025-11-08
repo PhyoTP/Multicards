@@ -31,9 +31,11 @@ struct SettingsView: View{
                         
                     }
                 }
+                .listRowBackground(accent.opacity(0.2))
                 
             }
             .navigationTitle("Settings")
+            .unifiedBackground()
         }
         .alert("Are you sure you want to log out?", isPresented: $showAlert){
             Button("Log out",role: .destructive){

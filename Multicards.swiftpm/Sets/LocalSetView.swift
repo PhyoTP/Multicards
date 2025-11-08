@@ -13,6 +13,7 @@ struct LocalSetView: View{
                 Section("info"){
                     Text("Made by "+set.formattedCreator)
                 }
+                .listRowBackground(accent.opacity(0.2))
                 Section("Table"){
                     ScrollView(.horizontal){
                         Grid {
@@ -48,6 +49,7 @@ struct LocalSetView: View{
                         .padding()
                     }
                 }
+                .listRowBackground(accent.opacity(0.2))
             }
             .toolbar(){
                 ToolbarItem(placement: .topBarTrailing){
@@ -90,6 +92,7 @@ struct LocalSetView: View{
                 }
             }
             .navigationTitle(set.name)
+            .unifiedBackground()
         }
         .sheet(isPresented: $showSheet){
             EditSetView(set: $set)

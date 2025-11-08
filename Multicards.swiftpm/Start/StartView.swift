@@ -14,27 +14,15 @@ struct StartView: View {
             Button("Log in to PhyoID") {
                 login = true
             }
-            .frame(width: 200)
-            .padding()
-            .background(accent)
-            .foregroundStyle(.black)
-            .cornerRadius(10)
+            .big()
             Button("Register for a PhyoID") {
                 register = true
             }
-            .frame(width: 200)
-            .padding()
-            .background(accent)
-            .foregroundStyle(.black)
-            .cornerRadius(10)
+            .big()
             Button("Join as a Guest") {
                 userData.done = true
             }
-            .frame(width: 200)
-            .padding()
-            .background(accent)
-            .foregroundStyle(.black)
-            .cornerRadius(10)
+            .big()
         }
         .sheet(isPresented: $login, content: {
             LoginView()
@@ -44,5 +32,17 @@ struct StartView: View {
             RegisterView() 
                 .environmentObject(userManager)
         })
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(bg)
+        .ignoresSafeArea()
+    }
+}
+extension Button{
+    func big()-> some View{
+        self.frame(width: 200)
+            .padding()
+            .background(accent)
+            .foregroundStyle(.black)
+            .cornerRadius(10)
     }
 }

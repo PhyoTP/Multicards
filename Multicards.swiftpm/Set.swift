@@ -8,6 +8,32 @@ struct CardSet: Codable, Identifiable{
     var creator: String?
     var formattedCreator: String {creator ?? "Deleted User"}
     var isPublic: Bool
+    var tags: [String]?
+    var safeTags: [String]{
+        if let safe = tags{
+            return safe
+        }
+        return Array<String>()
+    }
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
+        name = try container.decode(String.self, forKey: .name)
+        cards = try container.decode([Card].self, forKey: .cards)
+        creator = try container.decodeIfPresent(String.self, forKey: .creator)
+        isPublic = try container.decode(Bool.self, forKey: .isPublic)
+        tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
+    }
+    
+    // Keep a normal init for when you create CardSets in code
+    init(id: UUID = UUID(), name: String, cards: [Card], creator: String? = nil, isPublic: Bool, tags: [String] = []) {
+        self.id = id
+        self.name = name
+        self.cards = cards
+        self.creator = creator
+        self.isPublic = isPublic
+        self.tags = tags
+    }
     func keys() -> [String]{
         var tempKey: [String] = []
         for i in cards{
@@ -53,7 +79,7 @@ struct CardSet: Codable, Identifiable{
         return tempColumns
     }
 }
-struct Card: Codable, Identifiable, Hashable{
+struct Card: Codable, Identifiable, Hashable, Equatable{
     var id = UUID()
     var sides: [String: String] 
     var newSides: [Side]{

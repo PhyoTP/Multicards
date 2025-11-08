@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct CreateSetView: View {
-    @State private var set: CardSet = CardSet(name: "", cards: [Card(sides: ["": ""])], creator: "", isPublic: false)
+    @State private var set: CardSet = CardSet(name: "", cards: [Card(sides: ["": ""])], creator: "", isPublic: false, tags: [])
     @Environment(\.dismiss) var dismiss
     @State private var showSheet = false
     @State private var columns: [Column] = [Column(name: "", values: [""]),Column(name: "", values: [""])]
@@ -10,6 +10,7 @@ struct CreateSetView: View {
     @State private var alertDesc = ""
     @EnvironmentObject var localSetsManager: LocalSetsManager
     @EnvironmentObject var setsManager: SetsManager
+    @State private var tagsText = ""
     var body: some View {
         Form {
             Section("Details") {
@@ -17,8 +18,21 @@ struct CreateSetView: View {
                 if userData.isLoggedIn {
                     Toggle("Make Public", isOn: $set.isPublic)
                 }
+//                HStack{
+//                    Text("Tags: ")
+//                    TextField("Seperate with commas", text: Binding(get: { 
+//                        return tagsText
+//                    }, set: { newText in
+//                        if newText.contains(","){
+//                            let newTags = newText.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+//                            let totalTags = (set.tags ?? []) + newTags
+//                            set.tags = totalTags
+//                            tagsText = ""
+//                        }
+//                    }))
+//                }
             }
-            
+            .listRowBackground(accent.opacity(0.2))
             Section(header:Text("Table"), footer:
                 Button("Import", systemImage: "square.and.arrow.down") {
                     showSheet = true
@@ -27,7 +41,7 @@ struct CreateSetView: View {
                 GridView(columns: $columns)
                 
             }
-            
+            .listRowBackground(accent.opacity(0.2))
             Section {
                 Button("Create") {
                     let names = columns.map { $0.name }
@@ -57,6 +71,7 @@ struct CreateSetView: View {
                     dismiss()
                 }
             }
+            .listRowBackground(accent.opacity(0.2))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $showSheet) {
@@ -65,6 +80,7 @@ struct CreateSetView: View {
         .alert(isPresented: $showAlert) {
             Alert(title: Text("Error"), message: Text(alertDesc), dismissButton: .default(Text("OK")))
         }
+        .unifiedBackground()
     }
 }
 

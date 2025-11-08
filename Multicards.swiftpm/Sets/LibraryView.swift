@@ -16,8 +16,14 @@ struct LibraryView: View{
     @State private var input = ""
     var body: some View{
         NavigationStack{
-            Section(""){
-                List{
+            
+            
+            List{
+                Section("sets"){
+                    if covers.isEmpty{
+                        Text("No sets yet, create or favourite one!")
+                            .foregroundStyle(.secondary)
+                    }
                     ForEach(covers){ set in
                         RedirectSetView(set: set)
                     }
@@ -32,33 +38,38 @@ struct LibraryView: View{
                         
                     })
                 }
-                .searchable(text: $input)
-                .navigationTitle("Library")
-                .toolbar(){
-                    ToolbarItem(placement: .topBarTrailing){
-                        EditButton()
-                    }
-                    ToolbarItem(placement: .topBarTrailing){
-                        Button{
-                            showSheet = true
-                        }label:{
-                            Image(systemName: "plus")
-                        }
-                    }
+                .listRowBackground(accent.opacity(0.2))
+            }
+            .unifiedBackground()
+            .searchable(text: $input)
+            .navigationTitle("Library")
+            .toolbar(){
+                ToolbarItem(placement: .topBarTrailing){
+                    EditButton()
                 }
-                .refreshable {
-                    load()
-                }
-                .onAppear(){
-                    load()
+                ToolbarItem(placement: .topBarTrailing){
+                    Button{
+                        showSheet = true
+                    }label:{
+                        Image(systemName: "plus")
+                    }
                 }
             }
+            .refreshable {
+                load()
+            }
+            .onAppear(){
+                load()
+            }
+            
+            
         }
         .sheet(isPresented:$showSheet){
             CreateSetView()
                 .environmentObject(localSetsManager)
                 .environmentObject(setsManager)
         }
+        
     }
     func load(){
         for i in localSetsManager.localSets.indices{
@@ -68,5 +79,14 @@ struct LibraryView: View{
         }
         userManager.relogin()
         localSetsManager.sync()
+    }
+}
+
+extension View {
+    /// Applies a unified background color and hides default List/Form backgrounds
+    func unifiedBackground() -> some View {
+        self
+            .scrollContentBackground(.hidden) // Works on List & Form (iOS 16+)
+            .background(bg)
     }
 }

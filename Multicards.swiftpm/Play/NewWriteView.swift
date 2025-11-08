@@ -30,11 +30,7 @@ struct NewWriteView: View{
                     dontKnow = []
                     done = false
                 }
-                .frame(width: 200)
-                .padding()
-                .background(accent)
-                .foregroundStyle(.black)
-                .cornerRadius(10)
+                .big()
                 if !dontKnow.isEmpty{
                     Button("Restart with unknown"){
                         print(dontKnow)
@@ -43,11 +39,7 @@ struct NewWriteView: View{
                         done = false
                         print(cards)
                     }
-                    .frame(width: 200)
-                    .padding()
-                    .background(accent)
-                    .foregroundStyle(.black)
-                    .cornerRadius(10)
+                    .big()
                 }
                 Spacer()
             }
@@ -66,6 +58,7 @@ struct NewWriteView: View{
                                 }
                             }
                         }
+                        .listRowBackground(accent.opacity(0.2))
                         Section("Answers"){
                             ForEach(answers, id: \.self){answer in
                                 HStack{
@@ -75,7 +68,7 @@ struct NewWriteView: View{
                                 }
                             }
                         }
-                        
+                        .listRowBackground(accent.opacity(0.2))
                     }
                     .onAppear(){
                         if cards.isEmpty{
@@ -155,7 +148,10 @@ struct NewWriteView: View{
                             }
                         }
                     }
+                    .unifiedBackground()
                 }
+                .sensoryFeedback(.error, trigger: showAlert)
+                .sensoryFeedback(.success, trigger: checkOpacity == 1.0)
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(.green)
                     .font(.largeTitle)

@@ -26,13 +26,11 @@ struct MatchView: View {
                     resetGame()
                     start()
                 }
-                .frame(width: 200)
-                .padding()
-                .background(accent)
-                .foregroundStyle(.black)
-                .cornerRadius(10)
+                .big()
                 Spacer()
             }
+            .frame(maxWidth: .infinity)
+            .background(bg)
         }else{
             NavigationStack{
                 Grid {
@@ -116,6 +114,7 @@ struct MatchView: View {
                 .onAppear{
                     start()
                 }
+                .background(bg)
             }
         }
     }

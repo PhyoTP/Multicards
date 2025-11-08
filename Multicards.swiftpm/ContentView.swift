@@ -16,7 +16,7 @@ struct ContentView: View {
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
     var body: some View {
-        VStack(spacing:0){
+        VStack(spacing: 0){
             CheckOfflineView()
             if userData.done {
                 TabView(selection: $selection) {
@@ -24,7 +24,7 @@ struct ContentView: View {
                         .tabItem {
                             Label("Library", systemImage: "books.vertical.fill")
                         }.tag(1)
-                    HomeView()
+                    NewHomeView()
                         .tabItem {
                             Label("Home", systemImage: "house.fill")
                         }.tag(2)
@@ -43,6 +43,7 @@ struct ContentView: View {
                 Spacer()
             }
         }
+        .ignoresSafeArea()
     }
 }
 struct CheckOfflineView: View{

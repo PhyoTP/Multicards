@@ -35,11 +35,7 @@ struct FlashcardsView: View {
                             last = []
                             count = 0
                         }
-                        .frame(width: 200)
-                        .padding()
-                        .background(accent)
-                        .foregroundStyle(.black)
-                        .cornerRadius(10)
+                        .big()
                         if !dontKnow.isEmpty{
                             Button("Try again with unknown"){
                                 cards = dontKnow
@@ -50,11 +46,7 @@ struct FlashcardsView: View {
                                 dontKnow = []
                                 last = []
                             }
-                            .frame(width: 200)
-                            .padding()
-                            .background(accent)
-                            .foregroundStyle(.black)
-                            .cornerRadius(10)
+                            .big()
                         }
                         Spacer()
                         
@@ -64,153 +56,89 @@ struct FlashcardsView: View {
                     }
                     Spacer()
                 }
+                .frame(maxHeight: .infinity)
+                .background(bg)
             }else{
                 NavigationStack{
-                    Spacer()
-                    HStack{
+                    VStack{
                         Spacer()
-                        Image(systemName: "arrow.left")
-                        Text(String(know.count))
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(.green)
-                            .font(.system(size: 30))
-                        Spacer()
-                        Image(systemName: "multiply.circle.fill")
-                            .foregroundStyle(.red)
-                            .font(.system(size: 30))
-                        Text(String(dontKnow.count))
-                        Image(systemName: "arrow.right")
-                        Spacer()
-                    }
-                    .navigationTitle(String(cards.count-know.count-dontKnow.count)+" left")
-                    ZStack {
-                        ForEach(cards.reversed()) { card in
-                            VStack{
-                                if tapped{
-                                    ForEach(answers, id: \.self){ans in
-                                        VStack{
-                                            Text(ans)
-                                                .fontWeight(.medium)
-                                                .scaleEffect(x: -1, y: 1)
-                                                .minimumScaleFactor(0.2)
-                                                .multilineTextAlignment(.center)
-                                                .foregroundStyle(accent)
-                                            Text(card.sides[ans] ?? "")
-                                                .scaleEffect(x: -1, y: 1)
-                                                .minimumScaleFactor(0.2)
-                                                .multilineTextAlignment(.center)
+                        HStack{
+                            Spacer()
+                            Image(systemName: "arrow.left")
+                            Text(String(know.count))
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.green)
+                                .font(.system(size: 30))
+                            Spacer()
+                            Image(systemName: "multiply.circle.fill")
+                                .foregroundStyle(.red)
+                                .font(.system(size: 30))
+                            Text(String(dontKnow.count))
+                            Image(systemName: "arrow.right")
+                            Spacer()
+                        }
+                        .navigationTitle(String(cards.count-know.count-dontKnow.count)+" left")
+                        ZStack {
+                            ForEach(cards.reversed()) { card in
+                                VStack{
+                                    if tapped{
+                                        ForEach(answers, id: \.self){ans in
+                                            VStack{
+                                                Text(ans)
+                                                    .fontWeight(.medium)
+                                                    .scaleEffect(x: -1, y: 1)
+                                                    .minimumScaleFactor(0.2)
+                                                    .multilineTextAlignment(.center)
+                                                    .foregroundStyle(accent)
+                                                Text(card.sides[ans] ?? "")
+                                                    .scaleEffect(x: -1, y: 1)
+                                                    .minimumScaleFactor(0.2)
+                                                    .multilineTextAlignment(.center)
+                                            }
+                                            .padding()
+                                            if answers.last != ans{
+                                                Divider()
+                                            }
                                         }
-                                        .padding()
-                                        if answers.last != ans{
-                                            Divider()
-                                        }
-                                    }
-                                    
-                                }else{
-                                    ForEach(questions, id: \.self){que in
-                                        VStack{
-                                            Text(que)
-                                                .fontWeight(.medium)
-                                                .minimumScaleFactor(0.2)
-                                                .multilineTextAlignment(.center)
-                                                .foregroundStyle(accent)
-                                            Text(card.sides[que] ?? "")
-                                                .minimumScaleFactor(0.2)
-                                                .multilineTextAlignment(.center)
-                                        }
-                                        .padding()
-                                        if questions.last != que{
-                                            Divider()
+                                        
+                                    }else{
+                                        ForEach(questions, id: \.self){que in
+                                            VStack{
+                                                Text(que)
+                                                    .fontWeight(.medium)
+                                                    .minimumScaleFactor(0.2)
+                                                    .multilineTextAlignment(.center)
+                                                    .foregroundStyle(accent)
+                                                Text(card.sides[que] ?? "")
+                                                    .minimumScaleFactor(0.2)
+                                                    .multilineTextAlignment(.center)
+                                            }
+                                            .padding()
+                                            if questions.last != que{
+                                                Divider()
+                                            }
                                         }
                                     }
                                 }
                             }
-                            .frame(width: 200, height: 400)
-                            .background(Color(.systemGray4))
-                            .mask{
-                                RoundedRectangle(cornerRadius: 20)
-                            }
-                            .gesture(
-                                DragGesture(minimumDistance: 0, coordinateSpace: .local)
-                                
-                                    .onEnded({value in
-                                        
-                                        
-                                        if value.translation.width < 0{
-                                            
-                                            withAnimation(){
-                                                if tapped{
-                                                    dontKnow.append(card)
-                                                    last.append(false)
-                                                }else{
-                                                    know.append(card)
-                                                    last.append(true)
-                                                }
-                                                
-                                            }
-                                            tapped = false
-                                            rotation = 0
-                                        }
-                                        if value.translation.width > 0{
-                                            withAnimation(){
-                                                if tapped{
-                                                    know.append(card)
-                                                    last.append(true)
-                                                }else{
-                                                    dontKnow.append(card)
-                                                    last.append(false)
-                                                }
-                                                
-                                            }
-                                            tapped = false
-                                            rotation = 0
-                                        }
-                                        
-                                    })
-                            )
-                            .highPriorityGesture(
-                                TapGesture()
-                                    .onEnded{
-                                        withAnimation(){
-                                            rotation += 180
-                                        }
-                                        tapped.toggle()
+                        }
+                        if !last.isEmpty{
+                            Button("Undo", systemImage: "arrow.counterclockwise") {
+                                withAnimation {
+                                    if last.last == true && !know.isEmpty {
+                                        know.remove(at: know.count - 1)
+                                        last.remove(at: last.count-1)
+                                    }else if last.last == false && !dontKnow.isEmpty {
+                                        dontKnow.remove(at: dontKnow.count - 1)
+                                        last.remove(at: last.count-1)
                                     }
-                            )
-                            .rotation3DEffect(
-                                Angle(degrees: rotation), axis: (x: 0.0, y: 1.0, z: 0.0)
-                            )
-                            .offset(x: 
-                                        know.contains(where: {$0.id==card.id}) ? 
-                                    tapped ?
-                                    -geometry.size.width :
-                                        -geometry.size.width 
-                                    : 
-                                        dontKnow.contains(where: {$0.id==card.id}) ?
-                                    tapped ? 
-                                    geometry.size.width : 
-                                        geometry.size.width 
-                                    :
-                                        0
-                                    
-                            )
-                        }
-                    }
-                    if !last.isEmpty{
-                        Button("Undo", systemImage: "arrow.counterclockwise") {
-                            withAnimation {
-                                if last.last == true && !know.isEmpty {
-                                    know.remove(at: know.count - 1)
-                                    last.remove(at: last.count-1)
-                                }else if last.last == false && !dontKnow.isEmpty {
-                                    dontKnow.remove(at: dontKnow.count - 1)
-                                    last.remove(at: last.count-1)
+                                    print(last)
                                 }
-                                print(last)
                             }
                         }
+                        Spacer()
                     }
-                    Spacer()
+                    .background(bg)
                 }
             }
         }
@@ -222,3 +150,4 @@ struct FlashcardsView: View {
         }
     }
 }
+

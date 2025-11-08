@@ -118,6 +118,7 @@ struct RedirectSetView: View{
             HStack{
                 VStack(alignment: .leading){
                     Text(set.name)
+                        .font(.custom("AvenirNext-bold", size: 18))
                     HStack{
                         Text("By "+set.formattedCreator)
                             .font(.caption)
@@ -137,6 +138,7 @@ struct RedirectSetView: View{
                         .foregroundStyle(accent)
                 }
             }
+            .foregroundStyle(accent)
         }
         .buttonStyle(.plain)
     }

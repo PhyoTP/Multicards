@@ -39,25 +39,25 @@ struct GridView: View{
                             TextField("Dimension", text: $column.name)
                                 .fontWeight(.medium)
                             
-                                Menu{
-                                    if columns.count > 2 {
-                                        Button("Delete") {
-                                            if let index = columns.firstIndex(where: { $0.id == column.id }) {
-                                                columns.remove(at: index)
-                                            }
-                                        }
-                                    }
-                                    Button("Translate") {
+                            Menu{
+                                if columns.count > 2 {
+                                    Button("Delete") {
                                         if let index = columns.firstIndex(where: { $0.id == column.id }) {
-                                            selectedIndex = index
-                                            print(columns[index])
-                                        }else{
-                                            print("huh")
+                                            columns.remove(at: index)
                                         }
                                     }
-                                } label: {
-                                    Image(systemName: "ellipsis.circle")
                                 }
+                                Button("Translate") {
+                                    if let index = columns.firstIndex(where: { $0.id == column.id }) {
+                                        selectedIndex = index
+                                        print(columns[index])
+                                    }else{
+                                        print("huh")
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: "ellipsis.circle")
+                            }
                             
                             
                             Rectangle()
