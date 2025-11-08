@@ -12,7 +12,7 @@ struct SettingsView: View{
         
         NavigationStack{
             Form{
-                Section("phyo id"){
+                Section("PhyoID"){
                     if userData.isLoggedIn{
                         
                         Text("Logged in as "+userData.name)

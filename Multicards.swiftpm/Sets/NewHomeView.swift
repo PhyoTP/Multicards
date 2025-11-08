@@ -65,17 +65,22 @@ struct NewHomeView: View{
                     VStack{
                         Image(systemName: "questionmark.text.page")
                             .font(.system(size: 60))
-                            .foregroundStyle(accent)
                         Text("No results found, are you sure you're searching for the right thing?")
                     }
                         .padding()
                         .multilineTextAlignment(.center)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(bg)
                 }else{
-                    
-                    List(filteredSets) { filteredSet in
-                        RedirectSetView(set: filteredSet)
+                    List{
+                        Section{
+                            ForEach(filteredSets) { filteredSet in
+                                RedirectSetView(set: filteredSet)
+                            }
+                        }
+                        .listRowBackground(accent.opacity(0.2))
                     }
-                    
+                    .unifiedBackground()
                 }
             }
         }
@@ -112,7 +117,7 @@ struct ActionButton: View{
         .frame(width: 150, height: 150)
         .background(.quaternary)
         .mask{
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: 25)
         }
         .rotation3DEffect(
             .degrees(rotation),
@@ -123,7 +128,7 @@ struct ActionButton: View{
 extension Text{
     func header() -> some View{
         self
-            .font(.system(size: 15, weight: .regular))
+            .font(.system(size: 15, weight: .semibold))
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.leading)
     }
@@ -150,13 +155,16 @@ struct SetCoverView: View{
                             print(recentSetManager.sets.map{$0.name})
                         }
                 } else {
-                    Text("Set not found locally")
-                        .onAppear(){
-                            Task{
-                                try await localSetsManager.localSets.append(setsManager.getSet(set.id))
+                    ZStack{
+                        bg
+                        Text("Set not found locally")
+                            .onAppear(){
+                                Task{
+                                    try await localSetsManager.localSets.append(setsManager.getSet(set.id))
+                                }
+                                localSetsManager.sync()
                             }
-                            localSetsManager.sync()
-                        }
+                    }
                 }
             } else {
                 SetView(setID: set.id)
@@ -185,7 +193,7 @@ struct SetCoverView: View{
             .frame(width: 250, height: 150)
             .background(.quaternary)
             .mask{
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 25)
             }
         }
     }

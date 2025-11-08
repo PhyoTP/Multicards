@@ -103,7 +103,7 @@ struct MatchView: View {
                                 .frame(minWidth: 75, idealWidth: 100, maxWidth: 150, minHeight: 140)
                                 .background(Color(side.color))
                                 .mask{
-                                    RoundedRectangle(cornerRadius: 10)
+                                    RoundedRectangle(cornerRadius: 25)
                                 }
                                 .opacity(Double(side.opacity))
                             }

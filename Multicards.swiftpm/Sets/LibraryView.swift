@@ -19,9 +19,12 @@ struct LibraryView: View{
             
             
             List{
-                Section("sets"){
-                    if covers.isEmpty{
+                Section("Sets"){
+                    if localSetsManager.localSets.isEmpty{
                         Text("No sets yet, create or favourite one!")
+                            .foregroundStyle(.secondary)
+                    }else if covers.isEmpty{
+                        Text("Set not found")
                             .foregroundStyle(.secondary)
                     }
                     ForEach(covers){ set in

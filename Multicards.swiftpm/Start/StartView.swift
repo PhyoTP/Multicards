@@ -43,6 +43,6 @@ extension Button{
             .padding()
             .background(accent)
             .foregroundStyle(.black)
-            .cornerRadius(10)
+            .cornerRadius(25)
     }
 }

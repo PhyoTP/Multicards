@@ -21,7 +21,7 @@ let package = Package(
             displayVersion: "1.4",
             bundleVersion: "7",
             appIcon: .asset("AppIcon"),
-            accentColor: .presetColor(.blue),
+            accentColor: .asset("AccentColor"),
             supportedDeviceFamilies: [
                 .pad,
                 .phone

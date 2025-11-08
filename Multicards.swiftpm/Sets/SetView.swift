@@ -10,7 +10,7 @@ struct SetView: View {
         if let set = convertedSet{
             NavigationStack {
                 Form {
-                    Section("info"){
+                    Section("Info"){
                         Text("Made by "+set.formattedCreator)
                     }
                     .listRowBackground(accent.opacity(0.2))
@@ -97,7 +97,10 @@ struct SetView: View {
                 .unifiedBackground()
             }
         }else{
-            ProgressView()
+            ZStack{
+                bg
+                ProgressView()
+            }
                 .onAppear(){
                     Task{
                         do {
@@ -108,6 +111,7 @@ struct SetView: View {
                         
                     }
                 }
+                .ignoresSafeArea()
         }
     }
 }

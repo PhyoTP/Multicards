@@ -10,7 +10,7 @@ struct LocalSetView: View{
     var body: some View{
         NavigationStack{
             Form{
-                Section("info"){
+                Section("Info"){
                     Text("Made by "+set.formattedCreator)
                 }
                 .listRowBackground(accent.opacity(0.2))

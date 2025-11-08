@@ -12,7 +12,7 @@ struct MyApp: App {
                 .environmentObject(SetsManager())
                 .environmentObject(UserData())
                 .environment(recentSetManager)
-                .tint(accent)
+                .preferredColorScheme(.dark)
         }
     }
 }

@@ -8,7 +8,7 @@ struct ImportView: View{
     @Binding var result: [Column]
     var body: some View{
         Form{
-            Section("set"){
+            Section("Set"){
                 HStack{
                     Text("Term Separator:")
                     Picker("Term Separator", selection: $selectedTermSeparator) {

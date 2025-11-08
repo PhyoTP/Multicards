@@ -157,7 +157,7 @@ struct NewWriteView: View{
                     .font(.largeTitle)
                     .padding()
                     .background(Color.gray.opacity(0.1))
-                    .mask{RoundedRectangle(cornerRadius: 10)}
+                    .mask{RoundedRectangle(cornerRadius: 25)}
                     .opacity(checkOpacity)
             }
         }
