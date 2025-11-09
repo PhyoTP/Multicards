@@ -108,7 +108,7 @@ struct PlayView: View {
                     
                     
                 }
-                .listRowBackground(accent.opacity(0.2))
+                .listRowBackground(back)
                 Section("Mode"){
                     
                     
@@ -145,7 +145,7 @@ struct PlayView: View {
                         Toggle("Ignore spaces?", isOn: bindOption(options: $options, as: NewWrite.self).ignoreSpaces)
                     }
                 }
-                .listRowBackground(accent.opacity(0.2))
+                .listRowBackground(back)
                 Section{
                     if let selectedGamemode = gamemode{
                         NavigationLink{
@@ -165,7 +165,7 @@ struct PlayView: View {
                         }
                     }
                 }
-                .listRowBackground(accent.opacity(0.2))
+                .listRowBackground(back)
             }
             .navigationTitle("Play")
             .unifiedBackground()

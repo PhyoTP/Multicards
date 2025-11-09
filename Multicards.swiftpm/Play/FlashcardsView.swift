@@ -17,7 +17,7 @@ struct FlashcardsView: View {
     var options: Flashcards
     var body: some View {
         GeometryReader{geometry in
-        
+            
             if Set(cards).isSubset(of: Set(know + dontKnow)){
                 HStack{
                     Spacer()
@@ -120,6 +120,85 @@ struct FlashcardsView: View {
                                         }
                                     }
                                 }
+                                .frame(width: 200, height: 400)
+                                .background(back)
+                                .mask{
+                                    RoundedRectangle(cornerRadius: 20)
+                                }
+                                .gesture(
+                                    DragGesture(minimumDistance: 0, coordinateSpace: .local)
+                                    
+                                        .onEnded({value in
+                                            
+                                            
+                                            if value.translation.width < 0{
+                                                
+                                                withAnimation(){
+                                                    if tapped{
+                                                        dontKnow.append(card)
+                                                        last.append(false)
+                                                    }else{
+                                                        know.append(card)
+                                                        last.append(true)
+                                                    }
+                                                    
+                                                }
+                                                tapped = false
+                                                rotation = 0
+                                            }
+                                            if value.translation.width > 0{
+                                                withAnimation(){
+                                                    if tapped{
+                                                        know.append(card)
+                                                        last.append(true)
+                                                    }else{
+                                                        dontKnow.append(card)
+                                                        last.append(false)
+                                                    }
+                                                    
+                                                }
+                                                tapped = false
+                                                rotation = 0
+                                            }
+                                            
+                                        })
+                                )
+                                .highPriorityGesture(
+                                    TapGesture()
+                                        .onEnded{
+                                            withAnimation(){
+                                                rotation += 180
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                                
+                                            }
+                                            tapped.toggle()
+                                        }
+                                )
+                                .rotation3DEffect(
+                                    Angle(degrees: rotation), axis: (x: 0.0, y: 1.0, z: 0.0)
+                                )
+                                .offset(x:
+                                            know.contains(where: {$0.id==card.id}) ?
+                                        tapped ?
+                                        -geometry.size.width :
+                                            -geometry.size.width
+                                        :
+                                            dontKnow.contains(where: {$0.id==card.id}) ?
+                                        tapped ?
+                                        geometry.size.width :
+                                            geometry.size.width
+                                        :
+                                            0
+                                        
+                                )
+                                
                             }
                         }
                         if !last.isEmpty{
@@ -151,3 +230,7 @@ struct FlashcardsView: View {
     }
 }
 
+#Preview {
+    FlashcardsView(fullCards: [Card(sides: ["a":"b","c":"d"])], questions: ["a"], answers: ["c"], options: Flashcards())
+        .preferredColorScheme(.dark)
+}

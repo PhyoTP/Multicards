@@ -67,10 +67,10 @@ struct NewHomeView: View{
                             .font(.system(size: 60))
                         Text("No results found, are you sure you're searching for the right thing?")
                     }
-                        .padding()
-                        .multilineTextAlignment(.center)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(bg)
+                    .padding()
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(bg)
                 }else{
                     List{
                         Section{
@@ -78,7 +78,7 @@ struct NewHomeView: View{
                                 RedirectSetView(set: filteredSet)
                             }
                         }
-                        .listRowBackground(accent.opacity(0.2))
+                        .listRowBackground(back)
                     }
                     .unifiedBackground()
                 }
@@ -96,33 +96,39 @@ struct ActionButton: View{
     var name: String
     var image: String
     var action: () -> Void
-    @State private var rotation = 0.0
     var body: some View{
-        Button(action: {
-            action()
-            withAnimation{
-                rotation += 360
-            }
-        }){
-            VStack{
-                Image(systemName: image)
-                    .font(.system(size: 30))
-                Text(name)
-                    .multilineTextAlignment(.center)
+        Button(action: action){
+            if #available(iOS 26.0, *) {
+                VStack{
+                    Image(systemName: image)
+                        .font(.system(size: 30))
+                    Text(name)
+                        .multilineTextAlignment(.center)
+                    
+                }
                 
+                .padding()
+                .frame(width: 150, height: 150)
+                .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 25))
+                
+            } else {
+                VStack{
+                    Image(systemName: image)
+                        .font(.system(size: 30))
+                    Text(name)
+                        .multilineTextAlignment(.center)
+                    
+                }
+                
+                .padding()
+                .frame(width: 150, height: 150)
+                .background(
+                    RoundedRectangle(cornerRadius: 25)
+                        .background(.quaternary)
+                    
+                )
             }
-            
         }
-        .padding()
-        .frame(width: 150, height: 150)
-        .background(.quaternary)
-        .mask{
-            RoundedRectangle(cornerRadius: 25)
-        }
-        .rotation3DEffect(
-            .degrees(rotation),
-            axis: (x: 0.0, y: 1.0, z: 0.0)
-        )
     }
 }
 extension Text{

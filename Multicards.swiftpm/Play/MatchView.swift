@@ -33,88 +33,91 @@ struct MatchView: View {
             .background(bg)
         }else{
             NavigationStack{
-                Grid {
-                    ForEach($cardGrid, id: \.self) { $row in
-                        GridRow {
-                            ForEach($row) { $side in
-                                Button{
-                                    if let select = selected{
-                                        if select.id == side.id{
-                                            side.color = .systemGray4
-                                            print("unselect")
-                                        }else if side.cardID == select.cardID{
-                                            for i in cardGrid.indices{
-                                                for j in cardGrid[i].indices{
-                                                    if cardGrid[i][j].cardID == select.cardID{
-                                                        cardGrid[i][j].color = .systemGreen
-                                                        withAnimation{
-                                                            cardGrid[i][j].opacity = 0
+                ZStack{
+                    bg
+                        .ignoresSafeArea()
+                    Grid {
+                        ForEach($cardGrid, id: \.self) { $row in
+                            GridRow {
+                                ForEach($row) { $side in
+                                    Button{
+                                        if let select = selected{
+                                            if select.id == side.id{
+                                                side.color = back
+                                                print("unselect")
+                                            }else if side.cardID == select.cardID{
+                                                for i in cardGrid.indices{
+                                                    for j in cardGrid[i].indices{
+                                                        if cardGrid[i][j].cardID == select.cardID{
+                                                            cardGrid[i][j].color = .green
+                                                            withAnimation{
+                                                                cardGrid[i][j].opacity = 0
+                                                            }
+                                                            
+                                                        }
+                                                    }
+                                                    
+                                                }
+                                                count+=1
+                                                
+                                                if count == cards.count{
+                                                    timer?.invalidate()
+                                                    timer = nil
+                                                    if best == 0 || elapsedTime<best{
+                                                        best = elapsedTime
+                                                        print("better")
+                                                    }
+                                                    done = true
+                                                }
+                                            }else{
+                                                
+                                                for i in cardGrid.indices{
+                                                    if let index = cardGrid[i].firstIndex(where: {$0.id == select.id}){
+                                                        side.color = .red
+                                                        
+                                                        print("found")
+                                                        cardGrid[i][index].color = .red
+                                                        withAnimation(){
+                                                            cardGrid[i][index].color = back
+                                                            side.color = back
                                                         }
                                                         
                                                     }
                                                 }
-                                                
+                                                print("wrong")
                                             }
-                                            count+=1
-                                            
-                                            if count == cards.count{
-                                                timer?.invalidate()
-                                                timer = nil
-                                                if best == 0 || elapsedTime<best{
-                                                    best = elapsedTime
-                                                    print("better")
-                                                }
-                                                done = true
-                                            }
+                                            selected = nil
                                         }else{
-                                            
-                                            for i in cardGrid.indices{
-                                                if let index = cardGrid[i].firstIndex(where: {$0.id == select.id}){
-                                                    side.color = .red
-                                                    
-                                                    print("found")
-                                                    cardGrid[i][index].color = .red
-                                                    withAnimation(){
-                                                        cardGrid[i][index].color = .systemGray4
-                                                        side.color = .systemGray4
-                                                    }
-                                                    
-                                                }
-                                            }
-                                            print("wrong")
+                                            selected = side
+                                            side.color = accent.opacity(0.4)
+                                            print("new")
                                         }
-                                        selected = nil
-                                    }else{
-                                        selected = side
-                                        side.color = .systemGray
-                                        print("new")
+                                    }label:{
+                                        VStack{
+                                            Text(side.title)
+                                                .fontWeight(.medium)
+                                                .minimumScaleFactor(0.1)
+                                            Divider()
+                                            Text(side.value)
+                                                .minimumScaleFactor(0.1)
+                                        }
+                                        .padding()
                                     }
-                                }label:{
-                                    VStack{
-                                        Text(side.title)
-                                            .fontWeight(.medium)
-                                            .minimumScaleFactor(0.1)
-                                        Divider()
-                                        Text(side.value)
-                                            .minimumScaleFactor(0.1)
+                                    .frame(minWidth: 75, idealWidth: 100, maxWidth: 150, minHeight: 140)
+                                    .background(side.color)
+                                    .mask{
+                                        RoundedRectangle(cornerRadius: 25)
                                     }
-                                    .padding()
+                                    .opacity(Double(side.opacity))
                                 }
-                                .frame(minWidth: 75, idealWidth: 100, maxWidth: 150, minHeight: 140)
-                                .background(Color(side.color))
-                                .mask{
-                                    RoundedRectangle(cornerRadius: 25)
-                                }
-                                .opacity(Double(side.opacity))
                             }
                         }
                     }
+                    .navigationTitle(String(format: "%.1f",elapsedTime))
+                    .onAppear{
+                        start()
+                    }
                 }
-                .navigationTitle(String(format: "%.1f",elapsedTime))
-                .onAppear{
-                    start()
-                }
-                .background(bg)
             }
         }
     }
@@ -165,4 +168,8 @@ struct MatchView: View {
         count = 0
         done = false
     }
+}
+#Preview {
+    MatchView(questions: [Column(name: "a", values: ["b"])], answers: [Column(name: "c", values: ["d"])], options: Match())
+        .preferredColorScheme(.dark)
 }

@@ -95,7 +95,7 @@ struct Side: Identifiable, Hashable{
     var cardID: UUID
     var title: String
     var value: String
-    var color: UIColor = .systemGray4
+    var color: Color = back
     var opacity = 1
 }
 struct Column: Identifiable, Equatable, Hashable{

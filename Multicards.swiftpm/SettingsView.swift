@@ -31,7 +31,7 @@ struct SettingsView: View{
                         
                     }
                 }
-                .listRowBackground(accent.opacity(0.2))
+                .listRowBackground(back)
                 
             }
             .navigationTitle("Settings")

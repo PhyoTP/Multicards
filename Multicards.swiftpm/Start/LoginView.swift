@@ -12,7 +12,7 @@ struct LoginView: View{
                 TextField("Username", text: $userManager.user.username)
                 SecureField("Password",text: $userManager.user.password)
             }
-            .listRowBackground(accent.opacity(0.2))
+            .listRowBackground(back)
             Section{
                 Button("Log in"){
                     Task {
@@ -39,7 +39,7 @@ struct LoginView: View{
             }message: {
                 Text(errorDesc)
             }
-            .listRowBackground(accent.opacity(0.2))
+            .listRowBackground(back)
         }
         .unifiedBackground()
     }

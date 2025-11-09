@@ -13,7 +13,7 @@ struct SetView: View {
                     Section("Info"){
                         Text("Made by "+set.formattedCreator)
                     }
-                    .listRowBackground(accent.opacity(0.2))
+                    .listRowBackground(back)
                     Section("Table"){
                         ScrollView(.horizontal){
                             Grid {
@@ -49,7 +49,7 @@ struct SetView: View {
                             .padding()
                         }
                     }
-                    .listRowBackground(accent.opacity(0.2))
+                    .listRowBackground(back)
                 }
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {

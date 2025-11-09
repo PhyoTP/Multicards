@@ -58,7 +58,7 @@ struct NewWriteView: View{
                                 }
                             }
                         }
-                        .listRowBackground(accent.opacity(0.2))
+                        .listRowBackground(back)
                         Section("Answers"){
                             ForEach(answers, id: \.self){answer in
                                 HStack{
@@ -68,7 +68,7 @@ struct NewWriteView: View{
                                 }
                             }
                         }
-                        .listRowBackground(accent.opacity(0.2))
+                        .listRowBackground(back)
                     }
                     .onAppear(){
                         if cards.isEmpty{

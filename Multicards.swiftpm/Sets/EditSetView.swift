@@ -13,12 +13,12 @@ struct EditSetView: View {
             Section("Details") {
                 TextField("Title", text: $set.name)
             }
-            .listRowBackground(accent.opacity(0.2))
+            .listRowBackground(back)
             Section("Table") {
                 
                 GridView(columns: $columns)
             }
-            .listRowBackground(accent.opacity(0.2))
+            .listRowBackground(back)
             .onAppear(){
                 columns = set.convertToColumns()
             }
@@ -50,7 +50,7 @@ struct EditSetView: View {
                     dismiss()
                 }
             }
-            .listRowBackground(accent.opacity(0.2))
+            .listRowBackground(back)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .alert(isPresented: $showAlert) {

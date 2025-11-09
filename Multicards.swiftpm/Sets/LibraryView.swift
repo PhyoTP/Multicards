@@ -41,7 +41,7 @@ struct LibraryView: View{
                         
                     })
                 }
-                .listRowBackground(accent.opacity(0.2))
+                .listRowBackground(back)
             }
             .unifiedBackground()
             .searchable(text: $input)

@@ -17,7 +17,6 @@ struct ContentView: View {
     }
     var body: some View {
         VStack(spacing: 0){
-            CheckOfflineView()
             if userData.done {
                 TabView(selection: $selection) {
                     LibraryView()
@@ -44,6 +43,10 @@ struct ContentView: View {
             }
         }
         .ignoresSafeArea()
+        .safeAreaInset(edge: .top){
+            CheckOfflineView()
+        }
+        
     }
 }
 struct CheckOfflineView: View{

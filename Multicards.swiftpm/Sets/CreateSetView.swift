@@ -32,7 +32,7 @@ struct CreateSetView: View {
 //                    }))
 //                }
             }
-            .listRowBackground(accent.opacity(0.2))
+            .listRowBackground(back)
             Section(header:Text("Table"), footer:
                 Button("Import", systemImage: "square.and.arrow.down") {
                     showSheet = true
@@ -41,7 +41,7 @@ struct CreateSetView: View {
                 GridView(columns: $columns)
                 
             }
-            .listRowBackground(accent.opacity(0.2))
+            .listRowBackground(back)
             Section {
                 Button("Create") {
                     let names = columns.map { $0.name }
@@ -71,7 +71,7 @@ struct CreateSetView: View {
                     dismiss()
                 }
             }
-            .listRowBackground(accent.opacity(0.2))
+            .listRowBackground(back)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(isPresented: $showSheet) {

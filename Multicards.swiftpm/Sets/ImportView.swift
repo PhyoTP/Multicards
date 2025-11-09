@@ -30,7 +30,7 @@ struct ImportView: View{
                 }
                 TextField("Paste here", text: $text, axis: .vertical)
             }
-            .listRowBackground(accent.opacity(0.2))
+            .listRowBackground(back)
             Section{
                 Button("Import"){
                     result=convertStringToColumns(input: text, termSeparator: selectedTermSeparator, cardSeparator: selectedCardSeparator)
@@ -41,7 +41,7 @@ struct ImportView: View{
                     dismiss()
                 }
             }
-            .listRowBackground(accent.opacity(0.2))
+            .listRowBackground(back)
         }
         .unifiedBackground()
     }
