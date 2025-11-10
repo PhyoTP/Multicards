@@ -16,7 +16,7 @@ struct SetView: View {
                         if let safeTags = set.tags, !safeTags.isEmpty{
                             ScrollView(.horizontal){
                                 HStack{
-                                    ForEach(safeTags, id: \.self){ tag in
+                                    ForEach(Array(safeTags), id: \.self){ tag in
                                         Text(tag)
                                             .padding(5)
                                             .background(RoundedRectangle(cornerRadius: 10).fill(accent))

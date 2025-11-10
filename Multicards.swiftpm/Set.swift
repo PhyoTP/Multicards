@@ -8,12 +8,12 @@ struct CardSet: Codable, Identifiable{
     var creator: String?
     var formattedCreator: String {creator ?? "Deleted User"}
     var isPublic: Bool
-    var tags: [String]?
-    var safeTags: [String]{
+    var tags: Set<String>?
+    var safeTags: Set<String>{
         if let safe = tags{
             return safe
         }
-        return Array<String>()
+        return Set<String>()
     }
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -22,11 +22,11 @@ struct CardSet: Codable, Identifiable{
         cards = try container.decode([Card].self, forKey: .cards)
         creator = try container.decodeIfPresent(String.self, forKey: .creator)
         isPublic = try container.decode(Bool.self, forKey: .isPublic)
-        tags = try container.decodeIfPresent([String].self, forKey: .tags) ?? []
+        tags = try container.decodeIfPresent(Set<String>.self, forKey: .tags) ?? []
     }
     
     // Keep a normal init for when you create CardSets in code
-    init(id: UUID = UUID(), name: String, cards: [Card], creator: String? = nil, isPublic: Bool, tags: [String] = []) {
+    init(id: UUID = UUID(), name: String, cards: [Card], creator: String? = nil, isPublic: Bool, tags: Set<String> = []) {
         self.id = id
         self.name = name
         self.cards = cards
@@ -209,7 +209,7 @@ struct SetCover: Identifiable, Codable, Hashable{
     var creator: String?
     var formattedCreator: String {creator ?? "Deleted User"}
     var cardCount: Int
-    var tags: [String] = []
+    var tags: Set<String> = []
 }
 
 

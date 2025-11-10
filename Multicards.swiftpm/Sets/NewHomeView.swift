@@ -17,9 +17,9 @@ struct NewHomeView: View{
         }
     }
     var recommendedSets: [SetCover]{
-        let tags = Set(localSetsManager.localSets.compactMap(\.tags))
+        let tags = Set(localSetsManager.localSets.flatMap { $0.tags ?? [] })
         return filteredSets.filter{
-            !Set(arrayLiteral: $0.tags).intersection(tags).isEmpty
+            !Set($0.tags).intersection(tags).isEmpty
         }
     }
     @Environment(RecentSetManager.self) var recentSetManager

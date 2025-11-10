@@ -17,11 +17,11 @@ struct EditSetView: View {
                     Text("Tags: ")
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack{
-                            ForEach(set.safeTags, id: \.self){tag in
+                            ForEach(Array(set.safeTags), id: \.self){tag in
                                 HStack{
                                     Text(tag)
                                     Button{
-                                        set.tags!.removeAll(where: { $0 == tag})
+                                        set.tags!.remove(tag)
                                     }label:{
                                         Image(systemName: "xmark")
                                     }
@@ -40,7 +40,7 @@ struct EditSetView: View {
                         if set.tags == nil{
                             set.tags = []
                         }
-                        set.tags!.append(tagsText)
+                        set.tags!.insert(tagsText)
                         tagsText = ""
                     }
                     .disabled(tagsText.isEmpty)

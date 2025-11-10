@@ -7,17 +7,21 @@ struct LibraryView: View{
     @State private var showSheet = false
     @EnvironmentObject var userData: UserData
     var covers: [SetCover]{
+        var result = [SetCover]()
         if input.isEmpty{
-            return localSetsManager.localSets.map{SetCover(id: $0.id, name: $0.name, creator: $0.creator, cardCount: $0.cards.count, tags: $0.safeTags)}
+            result = localSetsManager.localSets.map{SetCover(id: $0.id, name: $0.name, creator: $0.creator, cardCount: $0.cards.count, tags: $0.safeTags)}
         }else{
-            return localSetsManager.localSets.map{SetCover(id: $0.id, name: $0.name, creator: $0.creator, cardCount: $0.cards.count, tags: $0.safeTags)}.filter{$0.name.lowercased().contains(input.lowercased())}
+            result = localSetsManager.localSets.map{SetCover(id: $0.id, name: $0.name, creator: $0.creator, cardCount: $0.cards.count, tags: $0.safeTags)}.filter{$0.name.lowercased().contains(input.lowercased())}
         }
+        if !filterTags.isEmpty{
+            result = result.filter({$0.tags.isSuperset(of: filterTags)})
+        }
+        return result
     }
     @State private var input = ""
+    @State private var filterTags: Set<String> = []
     var body: some View{
         NavigationStack{
-            
-            
             List{
                 Section("Sets"){
                     if localSetsManager.localSets.isEmpty{
@@ -47,14 +51,43 @@ struct LibraryView: View{
             .searchable(text: $input)
             .navigationTitle("Library")
             .toolbar(){
-                ToolbarItem(placement: .topBarTrailing){
+                ToolbarItemGroup(placement: .topBarTrailing){
                     EditButton()
-                }
-                ToolbarItem(placement: .topBarTrailing){
                     Button{
                         showSheet = true
                     }label:{
                         Image(systemName: "plus")
+                    }
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    let tags = localSetsManager.localSets.reduce(into: Set<String>()) { result, cardSet in
+                        result.formUnion(cardSet.safeTags)
+                    }
+                    Menu{
+                        Section{
+                            Text("Filter by tags...")
+                            ForEach(Array(tags), id: \.self) { tag in
+                                Button{
+                                    if filterTags.contains(tag) {
+                                        filterTags.remove(tag)
+                                    }else{
+                                        filterTags.insert(tag)
+                                    }
+                                }label: {
+                                    HStack{
+                                        Text(tag)
+                                        if filterTags.contains(tag) {
+                                            Image(systemName: "checkmark")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Button("Reset", role: .destructive){
+                            filterTags = []
+                        }
+                    }label: {
+                        Image(systemName: "line.3.horizontal.decrease")
                     }
                 }
             }
