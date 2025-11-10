@@ -8,10 +8,43 @@ struct EditSetView: View {
     @State private var showAlert = false
     @State private var alertDesc = ""
     @EnvironmentObject var localSetsManager: LocalSetsManager
+    @State private var tagsText = ""
     var body: some View {
         Form {
             Section("Details") {
                 TextField("Title", text: $set.name)
+                HStack{
+                    Text("Tags: ")
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack{
+                            ForEach(set.safeTags, id: \.self){tag in
+                                HStack{
+                                    Text(tag)
+                                    Button{
+                                        set.tags!.removeAll(where: { $0 == tag})
+                                    }label:{
+                                        Image(systemName: "xmark")
+                                    }
+                                }
+                                    .padding(5)
+                                    .background(RoundedRectangle(cornerRadius: 10).fill(accent))
+                                    .foregroundStyle(.black)
+                                
+                            }
+                        }
+                    }
+                }
+                HStack{
+                    TextField("Add tag", text: $tagsText)
+                    Button("Add"){
+                        if set.tags == nil{
+                            set.tags = []
+                        }
+                        set.tags!.append(tagsText)
+                        tagsText = ""
+                    }
+                    .disabled(tagsText.isEmpty)
+                }
             }
             .listRowBackground(back)
             Section("Table") {

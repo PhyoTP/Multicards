@@ -8,19 +8,23 @@ struct NewPlayView: View{
     var body: some View{
         NavigationStack{
             VStack{
-                TabView(selection: $gamemode){
-                    
+                HStack{
+                    Text("Choose a game mode").header()
+                    Spacer()
                 }
-                .tabViewStyle(.page)
-                Button("Next"){
-                    
-                }.big()
+                HStack{
+                    Text("aaaaaaaaaaaaaaaaa")
+                }
+                .frame(maxWidth: .infinity)
             }
             .padding()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(bg)
         }
     }
 }
 #Preview{
     NewPlayView(cards: [])
-        .tint(accent)
+        .preferredColorScheme(ColorScheme.dark)
+    
 }

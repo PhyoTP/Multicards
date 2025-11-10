@@ -37,76 +37,43 @@ struct PlayView: View {
                                 .bold()
                         }
                     }
-                    List(set.convertToColumns()){column in
-                        ZStack{
-                            HStack{
+                    List(set.convertToColumns()) { column in
+                        ZStack {
+                            HStack {
                                 Spacer()
-                                if questionSelected.contains(where: {$0.name == column.name}){
-                                    
-                                    Button{
-                                        
-                                        questionSelected.removeAll(where: {$0.name == column.name})
-                                        
-                                        
-                                    }label: {
-                                        ZStack{
-                                            Image(systemName: "square.fill")
-                                            Image(systemName: "checkmark.square.fill")
-                                                .foregroundStyle(accent)
-                                            Image(systemName: "square")
+                                CheckmarkView(
+                                    toggled: Binding(
+                                        get: { questionSelected.contains(where: { $0.name == column.name }) },
+                                        set: { isOn in
+                                            if isOn {
+                                                questionSelected.append(column)
+                                            } else {
+                                                questionSelected.removeAll { $0.name == column.name }
+                                            }
                                         }
-                                    }
-                                    .buttonStyle(.plain)
-                                    
-                                }else{
-                                    Button{
-                                        questionSelected.append(column)
-                                        
-                                    }label:{
-                                        Image(systemName: "square")
-                                    }
-                                    .buttonStyle(.plain)
-                                }
+                                    )
+                                )
                                 Spacer()
                             }
-                            HStack{
+                            HStack {
                                 Text(column.name)
                                 Spacer()
-                                if answerSelected.contains(where: {$0.name == column.name}){
-                                    
-                                    Button{
-                                        
-                                        answerSelected.removeAll(where: {$0.name == column.name})
-                                        
-                                        
-                                    }label: {
-                                        ZStack{
-                                            Image(systemName: "square.fill")
-                                            Image(systemName: "checkmark.square.fill")
-                                                .foregroundStyle(accent)
-                                            Image(systemName: "square")
+                                CheckmarkView(
+                                    toggled: Binding(
+                                        get: { answerSelected.contains(where: { $0.name == column.name }) },
+                                        set: { isOn in
+                                            if isOn {
+                                                answerSelected.append(column)
+                                            } else {
+                                                answerSelected.removeAll { $0.name == column.name }
+                                            }
                                         }
-                                    }
-                                    .buttonStyle(.plain)
-                                    
-                                }else{
-                                    Button{
-                                        answerSelected.append(column)
-                                        
-                                    }label:{
-                                        Image(systemName: "square")
-                                    }
-                                    .buttonStyle(.plain)
-                                }
+                                    )
+                                )
                             }
                         }
                     }
-                    
-                    
-                    
-                    
-                    
-                    
+
                 }
                 .listRowBackground(back)
                 Section("Mode"){
@@ -152,13 +119,13 @@ struct PlayView: View {
                             switch selectedGamemode {
                             case .Flashcards:
                                 FlashcardsView(fullCards: set.cards, questions: questionSelected.map{$0.name}, answers: answerSelected.map{$0.name}, options: options as? Flashcards ?? Flashcards())
-                                    
+                                
                             case .Match:
                                 MatchView(questions: questionSelected, answers: answerSelected, options: options as? Match ?? Match())
-                                    
+                                
                             case .Write:
                                 NewWriteView(fullCards: set.cards, questions: questionSelected.map{$0.name}, answers: answerSelected.map{$0.name}, options: options as? NewWrite ?? NewWrite())
-                                    
+                                
                             }
                         }label: {
                             Label("Play", systemImage: "play.fill")
@@ -171,4 +138,28 @@ struct PlayView: View {
             .unifiedBackground()
         }
     }
+}
+struct CheckmarkView: View {
+    @Binding var toggled: Bool
+    
+    var body: some View {
+        Button {
+            withAnimation(.spring()) {
+                toggled.toggle()
+            }
+        } label: {
+            Image(systemName: toggled ? "checkmark.square.fill" : "square")
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(.white, accent)
+        }
+        .buttonStyle(.plain)
+        .contentTransition(.symbolEffect(.replace))
+    }
+}
+#Preview {
+    @Previewable @State var toggled: Bool = false
+    CheckmarkView(
+        toggled: $toggled
+    )
+    .preferredColorScheme(.dark)
 }

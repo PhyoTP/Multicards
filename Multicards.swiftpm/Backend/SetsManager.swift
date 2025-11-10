@@ -4,11 +4,16 @@ import SwiftUI
 class SetsManager: ObservableObject {
     @Published var sets: [SetCover]?
     @Published var errorDesc: String = "a"
+    @Published var recommendedSets: [SetCover]?
     
-    
-    func getSets() {
+    func getSets(tags: [String] = []) {
         errorDesc = "a"
-        let apiURL = URL(string: "https://api.phyotp.dev/multicards/sets")!
+        var urlString = "https://api.phyotp.dev/multicards/sets"
+        if !tags.isEmpty {
+            let tagString = tags.joined(separator: ",")
+            urlString += "?tags=\(tagString)"
+        }
+        let apiURL = URL(string: urlString)!
         sets = nil
         Task {
             do {
@@ -16,8 +21,13 @@ class SetsManager: ObservableObject {
                 
                 
                 try await MainActor.run {
-                    self.sets = try JSONDecoder().decode([SetCover].self, from: data)
+                    let decodedSets = try JSONDecoder().decode([SetCover].self, from: data)
                     self.errorDesc = "No error"
+                    if !tags.isEmpty {
+                        self.recommendedSets = decodedSets
+                    }else{
+                        self.sets = decodedSets
+                    }
                 }
             } catch {
                 print("Failed to fetch sets: \(error.localizedDescription)")
@@ -278,5 +288,19 @@ class LocalSetsManager: ObservableObject {
            let setsDecoded = try? jsonDecoder.decode([SetCover].self, from: retrievedSetData) {
             sets = setsDecoded
         }
+    }
+    func reload(userData: UserData, localSetsManager: LocalSetsManager, setsManager: SetsManager) {
+        print("reloading")
+        var newSets = [SetCover]()
+        for set in sets {
+            if let localSet = localSetsManager.localSets.first(where: { $0.id == set.id }) {
+                
+                newSets.append(SetCover(id: localSet.id, name: localSet.name, creator: localSet.creator, cardCount: localSet.cards.count, tags: localSet.safeTags))
+                        
+            } else if let publicSet = setsManager.sets?.first(where: { $0.id == set.id }){
+                newSets.append(publicSet)
+            }
+        }
+        sets = newSets
     }
 }

@@ -7,9 +7,9 @@ struct SettingsView: View{
     @EnvironmentObject var localSetsManager: LocalSetsManager
     @State private var login = false
     @State private var register = false
-    
+    @Environment(RecentSetManager.self) var recentSetManager: RecentSetManager
     var body: some View{
-        
+        @Bindable var recentSetManager = recentSetManager
         NavigationStack{
             Form{
                 Section("PhyoID"){
@@ -32,7 +32,16 @@ struct SettingsView: View{
                     }
                 }
                 .listRowBackground(back)
-                
+                Section{
+                    Button("Clear recent sets", role: .destructive) {
+                        recentSetManager.sets = []
+                    }
+                    VStack{
+                        Text("Your tags")
+                    }
+                    
+                }
+                .listRowBackground(back)
             }
             .navigationTitle("Settings")
             .unifiedBackground()

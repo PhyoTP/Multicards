@@ -18,19 +18,39 @@ struct CreateSetView: View {
                 if userData.isLoggedIn {
                     Toggle("Make Public", isOn: $set.isPublic)
                 }
-//                HStack{
-//                    Text("Tags: ")
-//                    TextField("Seperate with commas", text: Binding(get: { 
-//                        return tagsText
-//                    }, set: { newText in
-//                        if newText.contains(","){
-//                            let newTags = newText.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
-//                            let totalTags = (set.tags ?? []) + newTags
-//                            set.tags = totalTags
-//                            tagsText = ""
-//                        }
-//                    }))
-//                }
+                HStack{
+                    Text("Tags: ")
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack{
+                            ForEach(set.safeTags, id: \.self){tag in
+                                HStack{
+                                    Text(tag)
+                                    Button{
+                                        set.tags!.removeAll(where: { $0 == tag})
+                                    }label:{
+                                        Image(systemName: "xmark")
+                                    }
+                                }
+                                    .padding(5)
+                                    .background(RoundedRectangle(cornerRadius: 10).fill(accent))
+                                    .foregroundStyle(.black)
+                                
+                            }
+                        }
+                    }
+                }
+                HStack{
+                    TextField("Add tag", text: $tagsText)
+                    Button("Add"){
+                        if set.tags == nil{
+                            set.tags = []
+                        }
+                        set.tags!.append(tagsText)
+                        tagsText = ""
+                    }
+                    .disabled(tagsText.isEmpty)
+                }
+                
             }
             .listRowBackground(back)
             Section(header:Text("Table"), footer:

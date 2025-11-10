@@ -12,6 +12,24 @@ struct SetView: View {
                 Form {
                     Section("Info"){
                         Text("Made by "+set.formattedCreator)
+                        
+                        if let safeTags = set.tags, !safeTags.isEmpty{
+                            ScrollView(.horizontal){
+                                HStack{
+                                    ForEach(safeTags, id: \.self){ tag in
+                                        Text(tag)
+                                            .padding(5)
+                                            .background(RoundedRectangle(cornerRadius: 10).fill(accent))
+                                            .foregroundStyle(.black)
+                                    }
+                                }
+                            }
+                        }else{
+                            Text("No tags")
+                                .foregroundStyle(.secondary)
+                        }
+                            
+                        
                     }
                     .listRowBackground(back)
                     Section("Table"){
@@ -101,17 +119,17 @@ struct SetView: View {
                 bg
                 ProgressView()
             }
-                .onAppear(){
-                    Task{
-                        do {
-                            convertedSet = try await setsManager.getSet(setID)
-                        }catch{
-                            convertedSet = localSetsManager.localSets.first(where: {$0.id == setID})
-                        }
-                        
+            .onAppear(){
+                Task{
+                    do {
+                        convertedSet = try await setsManager.getSet(setID)
+                    }catch{
+                        convertedSet = localSetsManager.localSets.first(where: {$0.id == setID})
                     }
+                    
                 }
-                .ignoresSafeArea()
+            }
+            .ignoresSafeArea()
         }
     }
 }

@@ -16,6 +16,12 @@ struct NewHomeView: View{
             return []
         }
     }
+    var recommendedSets: [SetCover]{
+        let tags = Set(localSetsManager.localSets.compactMap(\.tags))
+        return filteredSets.filter{
+            !Set(arrayLiteral: $0.tags).intersection(tags).isEmpty
+        }
+    }
     @Environment(RecentSetManager.self) var recentSetManager
     @State private var showCreateSheet = false
     var body: some View{
@@ -45,15 +51,37 @@ struct NewHomeView: View{
                                 }
                             }
                         }
-                        Text("Discover").header()
-                        ScrollView(.horizontal){
-                            HStack{
-                                ForEach(filteredSets) { filteredSet in
-                                    SetCoverView(set: filteredSet)
+                        if !recommendedSets.isEmpty{
+                            Text("For you").header()
+                            ScrollView(.horizontal){
+                                HStack{
+                                    ForEach(recommendedSets) { recommendedSet in
+                                        SetCoverView(set: recommendedSet)
+                                    }
+                                }
+                                .onAppear(){
+                                    print("reload")
+                                    recentSetManager.reload(userData: userData, localSetsManager: localSetsManager, setsManager: setsManager)
+                                }
+                            }
+                        }else{
+                            Text("Discover").header()
+                            ScrollView(.horizontal){
+                                if setsManager.sets == nil{
+                                    ProgressView()
+                                }else{
+                                    HStack{
+                                        ForEach(filteredSets) { filteredSet in
+                                            SetCoverView(set: filteredSet)
+                                        }
+                                    }
+                                    .onAppear(){
+                                        print("reload")
+                                        recentSetManager.reload(userData: userData, localSetsManager: localSetsManager, setsManager: setsManager)
+                                    }
                                 }
                             }
                         }
-                        
                     }
                     .padding()
                     
@@ -109,8 +137,7 @@ struct ActionButton: View{
                 
                 .padding()
                 .frame(width: 150, height: 150)
-                .glassEffect(.clear, in: RoundedRectangle(cornerRadius: 25))
-                
+                .glassEffect(.clear.interactive(), in: RoundedRectangle(cornerRadius: 25))
             } else {
                 VStack{
                     Image(systemName: image)
@@ -122,10 +149,9 @@ struct ActionButton: View{
                 
                 .padding()
                 .frame(width: 150, height: 150)
-                .background(
+                .background(.quaternary)
+                .mask(
                     RoundedRectangle(cornerRadius: 25)
-                        .background(.quaternary)
-                    
                 )
             }
         }
@@ -192,7 +218,33 @@ struct SetCoverView: View{
                 HStack{
                     Text("By "+set.formattedCreator)
                     Spacer()
-                    Text(String(set.cardCount)+" cards")
+                    Text(String(set.cardCount))
+                    Image(systemName: "rectangle.stack")
+                }
+                if !set.tags.isEmpty{
+                    HStack{
+                        if #available(iOS 26.0, *) {
+                            Text(set.tags.first!)
+                                .padding(5)
+                                .glassEffect()
+                            if set.tags.count>1{
+                                Text("+"+String(set.tags.count-1))
+                                    .padding(5)
+                                    .glassEffect()
+                            }
+                        } else {
+                            Text(set.tags.first!)
+                                .padding(5)
+                                .background(accent)
+                                .foregroundColor(.black)
+                            if set.tags.count>1{
+                                Text("+"+String(set.tags.count-1))
+                                    .padding(5)
+                                    .background(RoundedRectangle(cornerRadius: 10).fill(accent))
+                                    .foregroundColor(.black)
+                            }
+                        }
+                    }
                 }
             }
             .padding()

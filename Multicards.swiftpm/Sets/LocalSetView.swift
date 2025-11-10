@@ -12,6 +12,21 @@ struct LocalSetView: View{
             Form{
                 Section("Info"){
                     Text("Made by "+set.formattedCreator)
+                    if let safeTags = set.tags, !safeTags.isEmpty{
+                        ScrollView(.horizontal){
+                            HStack{
+                                ForEach(safeTags, id: \.self){ tag in
+                                    Text(tag)
+                                        .padding(5)
+                                        .background(RoundedRectangle(cornerRadius: 10).fill(accent))
+                                        .foregroundStyle(.black)
+                                }
+                            }
+                        }
+                    }else{
+                        Text("No tags")
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 .listRowBackground(back)
                 Section("Table"){

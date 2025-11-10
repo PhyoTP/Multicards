@@ -209,6 +209,7 @@ struct SetCover: Identifiable, Codable, Hashable{
     var creator: String?
     var formattedCreator: String {creator ?? "Deleted User"}
     var cardCount: Int
+    var tags: [String] = []
 }
 
 
