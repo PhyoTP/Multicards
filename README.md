@@ -1,3 +1,4 @@
+Notice: new repo is at https://github.com/PhyoTP/multicardsapp , this is the old Swift Playgrounds version of the app.
 # Multicards
 Flashcards but they break the laws of physics and go multi-dimensional<br>
 made for [Cider by Hack Club](https://cider.hackclub.com)
